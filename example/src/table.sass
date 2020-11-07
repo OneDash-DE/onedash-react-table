@@ -1,0 +1,24 @@
+html
+	--blue: #162055
+	--lightBlue: #c72a2a29
+	--invalid: #d13131
+	--background: white
+	--very-light-gray: #edf1f6
+	--light-gray: #bfc3ca
+	--middle-gray: #81848a
+
+.onedash-table
+	.row
+		background: white
+		padding: 15px 10px
+		margin: 10px 0px
+		border-radius: 5px
+		box-shadow: 1px 1px 3px rgba(0,0,0,0.1)
+		&.odd
+			background: #f8f8fc
+		&.selected
+			background: var(--lightBlue)
+
+		@media (hover: hover) and (pointer: fine)
+			&:hover
+				opacity: 0.5
