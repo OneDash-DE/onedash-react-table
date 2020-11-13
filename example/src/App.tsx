@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Table, Column } from "onedash-react-table";
 import { generateFakeData } from "./DataGenerator";
 
-const userData = generateFakeData(100);
+const userData = generateFakeData(1000);
 
 interface AppProps {}
 class App extends Component<AppProps> {

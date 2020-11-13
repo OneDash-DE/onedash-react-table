@@ -1,6 +1,6 @@
 html
 	--blue: #162055
-	--lightBlue: #c72a2a29
+	--lightBlue: #009eff1d
 	--invalid: #d13131
 	--background: white
 	--very-light-gray: #edf1f6
@@ -8,17 +8,93 @@ html
 	--middle-gray: #81848a
 
 .onedash-table
+	background: white
+	margin: 10px
+	border: 1px solid var(--very-light-gray)
+	border-radius: 10px
+	font-size: 14px
+	box-shadow: 0px 0px 3px rgba(0,0,0,0.1)
+	.table-head
+		padding: 20px 20px
+		font-weight: bold
+
+		.sorting-icons
+			display: inline-flex
+			align-items: center
+			margin-left: 5px
+
+			.sort-up, .sort-down
+				background: var(--very-light-gray)
+				margin: 0px 1px
+				border-radius: 2px
+				width: 15px
+				height: 15px
+				display: flex
+				justify-content: center
+				align-items: center
+				span
+					display: block
+					width: 0
+					height: 0
+					border-left: 5px solid transparent
+					border-right: 5px solid transparent
+			.sort-up span
+				border-bottom: 5px solid var(--middle-gray)
+			.sort-down span
+				border-top: 5px solid var(--middle-gray)
+
 	.row
-		background: white
-		padding: 15px 10px
-		margin: 10px 0px
-		border-radius: 5px
-		box-shadow: 1px 1px 3px rgba(0,0,0,0.1)
-		&.odd
-			background: #f8f8fc
-		&.selected
+		border-top: 1px solid var(--very-light-gray)
+
+		.inner
+			margin: 5px 10px
+			border-radius: 10px
+			padding: 7.5px 10px
+			transition: .1s all ease-in-out
+		&.selected .inner
 			background: var(--lightBlue)
 
 		@media (hover: hover) and (pointer: fine)
-			&:hover
-				opacity: 0.5
+			&:not(.selected):hover .inner
+				background: #37468f07
+
+	.select-container
+		display: block
+		position: relative
+		cursor: pointer
+		user-select: none
+		input
+			display: none
+		input:checked ~ .checkmark
+			background-color: var(--blue)
+
+		&:hover .checkmark
+			background-color: var(--light-gray)
+
+		input:checked ~ .checkmark:after
+			display: block
+		.checkmark
+			position: absolute
+			top: 0
+			left: 0
+			height: 15px
+			width: 15px
+			background-color: #eee
+			border-radius: 4px
+			transition: .1s all ease-in-out
+
+			&:after
+				content: ""
+				position: absolute
+				display: none
+
+			&:after
+				left: 5px
+				top: 2.5px
+				width: 3px
+				height: 7px
+				border: solid white
+				border-width: 0 2px 2px 0
+				-webkit-transform: rotate(45deg)
+				-ms-transform: rotate(45deg)
+				transform: rotate(45deg)

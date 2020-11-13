@@ -60,7 +60,7 @@ class Table extends Component<TableProps> {
 	};
 
 	onRowClick = (e: any, rowNum: number) => {
-		if (e.target.classList.contains("row-select")) return;
+		if (e.target.classList.contains("inner")) return;
 		this.onSelectRow(rowNum);
 	};
 
@@ -93,34 +93,50 @@ class Table extends Component<TableProps> {
 		return (
 			<div className="onedash-table">
 				<div className="table-head" style={{ display: "grid", gridTemplateColumns }}>
-					{multiSelect && <input type="checkbox" className="row-select-toggle" onChange={this.onSelectToggle} />}
+					{multiSelect && (
+						<label className="multi-select select-container select-toggle-container">
+							<input type="checkbox" onChange={this.onSelectToggle} className="row-select-toggle" />
+							<span className="checkmark"></span>
+						</label>
+					)}
 					{columns.map((column) => (
 						<div key={column.name} className="column column-head" data-name={column.name}>
 							{column.label}
+							{column.sortable && (
+								<div className="sorting-icons">
+									<div className="sort-up">
+										<span />
+									</div>
+									<div className="sort-down">
+										<span />
+									</div>
+								</div>
+							)}
 							{resizeable && <span className="resize-handle"></span>}
 						</div>
 					))}
 				</div>
 				<div className="table-body">
 					{rows.map((row, i) => (
-						<div
-							onClick={(e) => this.onRowClick(e, i)}
-							className={this.rowClassList(i)}
-							style={{ display: "grid", gridTemplateColumns }}
-							key={i}>
-							{multiSelect && (
-								<input
-									type="checkbox"
-									onChange={() => this.onSelectRow(i)}
-									checked={selectedRows.includes(i)}
-									className="row-select"
-								/>
-							)}
-							{columns.map((column, ii) => (
-								<div key={ii} className="cell">
-									{row[column.name]}
-								</div>
-							))}
+						<div onClick={(e) => this.onRowClick(e, i)} className={this.rowClassList(i)} key={i}>
+							<div className="inner" style={{ display: "grid", gridTemplateColumns }}>
+								{multiSelect && (
+									<label className="multi-select select-container">
+										<input
+											type="checkbox"
+											onChange={() => this.onSelectRow(i)}
+											checked={selectedRows.includes(i)}
+											className="row-select"
+										/>
+										<span className="checkmark"></span>
+									</label>
+								)}
+								{columns.map((column, ii) => (
+									<div key={ii} className="cell">
+										{row[column.name]}
+									</div>
+								))}
+							</div>
 						</div>
 					))}
 				</div>
