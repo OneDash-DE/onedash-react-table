@@ -3,9 +3,15 @@ import { ColumnItem, TableProps } from "../types";
 import Column from "./Column";
 
 class Table extends Component<TableProps> {
+	minWidth: number = 0;
+	table = React.createRef<HTMLDivElement>();
+
 	state = {
 		columns: [] as ColumnItem[],
-		selectedRows: [] as number[]
+		selectedRows: [] as number[],
+		sorting: undefined as undefined | { direction: "up" | "down"; column: ColumnItem },
+		ratios: [] as number[],
+		isMobile: false
 	};
 
 	getColumns = () => {
@@ -21,10 +27,21 @@ class Table extends Component<TableProps> {
 				columns.push(columnItem);
 			}
 		});
-		this.setState({ columns });
+		this.setState({ columns }, this.calculateColumnSizes);
+	};
+
+	checkTableWidth = () => {
+		if (this.props.disableMobile) return;
+		let isMobile = (this.table.current?.offsetWidth ?? 0) < (this.props.minWidth ?? this.minWidth);
+		if (this.state.isMobile !== isMobile) {
+			this.setState({
+				isMobile
+			});
+		}
 	};
 
 	componentDidMount() {
+		window.addEventListener("resize", this.checkTableWidth);
 		this.getColumns();
 		this.setState({
 			selectedRows: this.props.selectedRows
@@ -37,17 +54,60 @@ class Table extends Component<TableProps> {
 		if (latestProps.selectedRows !== this.props.selectedRows) {
 			this.setState({ selectedRows: this.props.selectedRows });
 		}
+		if (latestProps.rows !== this.props.rows) {
+			this.calculateColumnSizes();
+		}
 	}
 
-	getGridColumns = () => {
-		let num = this.state.columns.length;
+	calculateColumnSizes = () => {
+		const columns = this.state.columns;
 
-		let templateString = "1fr ".repeat(num);
-		if (this.props.multiSelect) templateString = "50px " + templateString;
+		// Take maximum 30 rows to decrease load
+		const rows = this.props.rows.slice(0, 30);
+		const sizes: number[] = new Array(columns.length).fill(0);
+		rows.forEach((row) => {
+			columns.forEach((column, i) => {
+				sizes[i] += String(row[column.name]).length;
+			});
+		});
+
+		// Add Column Width => Small values but longer column label
+		columns.forEach((column, i) => {
+			sizes[i] += (column.label?.length ?? 0 + 30) * 15;
+		});
+
+		const total = sizes.reduce((a, b) => a + b, 0);
+		if (!this.props.minWidth) {
+			this.minWidth = (total / (rows.length + 15)) * 15 + columns.length * 18;
+			this.checkTableWidth();
+		}
+
+		const ratios: number[] = [];
+		sizes.forEach((size, i) => {
+			ratios[i] = Number(((size / total) * 100).toFixed(2));
+		});
+		this.setState({ ratios });
+	};
+
+	getGridColumns = () => {
+		let templateString = "";
+		this.state.ratios.forEach((ratio, i) => {
+			if (this.state.columns[i].width) {
+				templateString += `${this.state.columns[i].width} `;
+			} else {
+				templateString += `${ratio}fr `;
+			}
+		});
+		if (this.props.select === "single") templateString = "50px " + templateString;
+		if (this.props.select === "multi") templateString = "50px " + templateString;
+		if (this.props.rightIcon) templateString += " 50px";
 		return templateString;
 	};
+
 	onSelectRow = (rowNum: number) => {
-		if (!this.props.multiSelect) return;
+		if (!this.props.select || this.props.select === "none") return;
+		if (this.props.select === "click") return this.props.onRowClick?.(rowNum, this.props.rows[rowNum]);
+
 		const selectedRows = this.state.selectedRows;
 		const index = selectedRows.indexOf(rowNum);
 		if (index === -1) {
@@ -74,26 +134,67 @@ class Table extends Component<TableProps> {
 		}
 		this.setState({ selectedRows });
 	};
-	rowClassList = (i: number) => {
+	rowClassList = (i: number, origIndex: number) => {
 		let className = "row";
 		if (i % 2 === 0) {
 			className += " even";
 		} else {
 			className += " odd";
 		}
-		if (this.state.selectedRows.includes(i)) className += " selected";
+		if (this.props.select === "click") className += " clickable";
+		if (this.state.selectedRows.includes(origIndex)) className += " selected";
+		return className;
+	};
+
+	sortRows = (column: ColumnItem, direction: "up" | "down") => {
+		if (this.state.sorting?.column === column && this.state.sorting.direction === direction) {
+			// Clear Sorting
+			this.setState({ sorting: undefined });
+		} else {
+			this.setState({ sorting: { column, direction } });
+		}
+	};
+
+	tableClass = () => {
+		let className = "onedash-table";
+		if (this.state.isMobile) className += " is-mobile";
 		return className;
 	};
 
 	render() {
-		const { columns, selectedRows } = this.state;
-		const { resizeable, rows, multiSelect } = this.props;
+		const { columns, selectedRows, sorting } = this.state;
+		const { resizeable, rows, select, rightIcon } = this.props;
+		let sortedRows: any[] = JSON.parse(JSON.stringify(rows));
 		const gridTemplateColumns = this.getGridColumns();
 
+		// All rows get a _index property to recognize them
+		sortedRows.forEach((row, i) => (row._index = i));
+
+		// Apply sorting
+		if (sorting) {
+			// Apply sorting
+			if (sorting.column.sortingFunction) {
+				sortedRows = sorting.column.sortingFunction(sortedRows);
+			} else {
+				sortedRows = sortedRows.sort((a, b) => {
+					const aVal = a[sorting.column.name];
+					const bVal = b[sorting.column.name];
+					if (typeof aVal === "string" && typeof bVal === "string") {
+						return sorting.direction === "up" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+					} else if (typeof aVal === "number" && typeof bVal === "number") {
+						return sorting.direction === "up" ? aVal - bVal : bVal - aVal;
+					} else {
+						console.error("You cannot sort this type of data. Allowed is only sorting of strings and numbers");
+						return 0;
+					}
+				});
+			}
+		}
+
 		return (
-			<div className="onedash-table">
+			<div ref={this.table} className={this.tableClass()}>
 				<div className="table-head" style={{ display: "grid", gridTemplateColumns }}>
-					{multiSelect && (
+					{select === "multi" && (
 						<label className="multi-select select-container select-toggle-container">
 							<input type="checkbox" onChange={this.onSelectToggle} className="row-select-toggle" />
 							<span className="checkmark"></span>
@@ -104,10 +205,18 @@ class Table extends Component<TableProps> {
 							{column.label}
 							{column.sortable && (
 								<div className="sorting-icons">
-									<div className="sort-up">
+									<div
+										onClick={() => this.sortRows(column, "up")}
+										className={
+											sorting?.column === column && sorting.direction === "up" ? "selected sort-up" : "sort-up"
+										}>
 										<span />
 									</div>
-									<div className="sort-down">
+									<div
+										onClick={() => this.sortRows(column, "down")}
+										className={
+											sorting?.column === column && sorting.direction === "down" ? "selected sort-down" : "sort-down"
+										}>
 										<span />
 									</div>
 								</div>
@@ -117,15 +226,15 @@ class Table extends Component<TableProps> {
 					))}
 				</div>
 				<div className="table-body">
-					{rows.map((row, i) => (
-						<div onClick={(e) => this.onRowClick(e, i)} className={this.rowClassList(i)} key={i}>
+					{sortedRows.map((row, i) => (
+						<div onClick={(e) => this.onRowClick(e, row._index)} className={this.rowClassList(i, row._index)} key={i}>
 							<div className="inner" style={{ display: "grid", gridTemplateColumns }}>
-								{multiSelect && (
+								{select === "multi" && (
 									<label className="multi-select select-container">
 										<input
 											type="checkbox"
 											onChange={() => this.onSelectRow(i)}
-											checked={selectedRows.includes(i)}
+											checked={selectedRows.includes(row._index)}
 											className="row-select"
 										/>
 										<span className="checkmark"></span>
@@ -136,6 +245,8 @@ class Table extends Component<TableProps> {
 										{row[column.name]}
 									</div>
 								))}
+
+								<div className="right-icon">{rightIcon}</div>
 							</div>
 						</div>
 					))}
