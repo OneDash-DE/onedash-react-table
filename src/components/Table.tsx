@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { ColumnItem, TableProps } from "../types";
 import Column from "./Column";
+import TableSearch from "./TableSearch";
 
 class Table extends Component<TableProps> {
 	minWidth: number = 0;
@@ -11,7 +12,9 @@ class Table extends Component<TableProps> {
 		selectedRows: [] as number[],
 		sorting: undefined as undefined | { direction: "up" | "down"; column: ColumnItem },
 		ratios: [] as number[],
-		isMobile: false
+		isMobile: false,
+		toolbar: [] as any[],
+		searchString: undefined as undefined | string
 	};
 
 	getColumns = () => {
@@ -43,6 +46,8 @@ class Table extends Component<TableProps> {
 	componentDidMount() {
 		window.addEventListener("resize", this.checkTableWidth);
 		this.getColumns();
+		const toolbar = this.buildToolbar(this.props.children, []);
+		this.setState({ toolbar });
 		this.setState({
 			selectedRows: this.props.selectedRows
 		});
@@ -50,6 +55,8 @@ class Table extends Component<TableProps> {
 	componentDidUpdate(latestProps: any) {
 		if (latestProps.children !== this.props.children) {
 			this.getColumns();
+			const toolbar = this.buildToolbar(this.props.children, []);
+			this.setState({ toolbar });
 		}
 		if (latestProps.selectedRows !== this.props.selectedRows) {
 			this.setState({ selectedRows: this.props.selectedRows });
@@ -89,7 +96,7 @@ class Table extends Component<TableProps> {
 		this.setState({ ratios });
 	};
 
-	getGridColumns = () => {
+	getDesktopGridColumns = () => {
 		let templateString = "";
 		this.state.ratios.forEach((ratio, i) => {
 			if (this.state.columns[i].width) {
@@ -98,6 +105,14 @@ class Table extends Component<TableProps> {
 				templateString += `${ratio}fr `;
 			}
 		});
+		if (this.props.select === "single") templateString = "50px " + templateString;
+		if (this.props.select === "multi") templateString = "50px " + templateString;
+		if (this.props.rightIcon) templateString += " 50px";
+		return templateString;
+	};
+
+	getMobileGridColumns = () => {
+		let templateString = "1fr ";
 		if (this.props.select === "single") templateString = "50px " + templateString;
 		if (this.props.select === "multi") templateString = "50px " + templateString;
 		if (this.props.rightIcon) templateString += " 50px";
@@ -161,11 +176,51 @@ class Table extends Component<TableProps> {
 		return className;
 	};
 
+	onSearchChange = (searchString: string) => {
+		this.setState({ searchString: searchString.toLowerCase(), sorting: undefined });
+	};
+
+	buildToolbar = (children: any, elements: any[]) => {
+		React.Children.forEach(children, (child: any, i) => {
+			if (!child) return;
+			let childElements = [] as any[];
+			if (child.props && child.props.children && typeof child.props.children === "object") {
+				childElements = this.buildToolbar(child.props.children, []);
+			}
+
+			switch (child.type) {
+				case Column:
+					return;
+				case TableSearch:
+					const newEl = React.cloneElement(
+						child,
+						{
+							key: i,
+							_onChange: this.onSearchChange
+						},
+						childElements
+					);
+					elements.push(newEl);
+					break;
+
+				default:
+					if (childElements.length > 0) {
+						const newEl = React.cloneElement(child, { key: i }, childElements);
+						elements.push(newEl);
+					} else {
+						elements.push(child);
+					}
+			}
+		});
+
+		return elements;
+	};
+
 	render() {
-		const { columns, selectedRows, sorting } = this.state;
+		const { columns, selectedRows, sorting, isMobile, toolbar, searchString } = this.state;
 		const { resizeable, rows, select, rightIcon } = this.props;
 		let sortedRows: any[] = JSON.parse(JSON.stringify(rows));
-		const gridTemplateColumns = this.getGridColumns();
+		const gridTemplateColumns = isMobile ? this.getMobileGridColumns() : this.getDesktopGridColumns();
 
 		// All rows get a _index property to recognize them
 		sortedRows.forEach((row, i) => (row._index = i));
@@ -191,66 +246,129 @@ class Table extends Component<TableProps> {
 			}
 		}
 
+		if (searchString && searchString.length > 0) {
+			sortedRows = sortedRows.filter((x) =>
+				Object.keys(x).find((propName) => {
+					const val = x[propName];
+					if (typeof val === "object" && typeof val === "function") return;
+					return String(val).toLowerCase().indexOf(searchString) !== -1;
+				})
+			);
+		}
+
+		console.log("moin");
+
 		return (
 			<div ref={this.table} className={this.tableClass()}>
-				<div className="table-head" style={{ display: "grid", gridTemplateColumns }}>
-					{select === "multi" && (
-						<label className="multi-select select-container select-toggle-container">
-							<input type="checkbox" onChange={this.onSelectToggle} className="row-select-toggle" />
-							<span className="checkmark"></span>
-						</label>
-					)}
-					{columns.map((column) => (
-						<div key={column.name} className="column column-head" data-name={column.name}>
-							{column.label}
-							{column.sortable && (
-								<div className="sorting-icons">
-									<div
-										onClick={() => this.sortRows(column, "up")}
-										className={
-											sorting?.column === column && sorting.direction === "up" ? "selected sort-up" : "sort-up"
-										}>
-										<span />
-									</div>
-									<div
-										onClick={() => this.sortRows(column, "down")}
-										className={
-											sorting?.column === column && sorting.direction === "down" ? "selected sort-down" : "sort-down"
-										}>
-										<span />
+				{toolbar}
+
+				{/**
+				
+												Desktop
+				
+				*/}
+				{!isMobile && (
+					<>
+						<div className="table-head" style={{ display: "grid", gridTemplateColumns }}>
+							{select === "multi" && (
+								<label className="multi-select select-container select-toggle-container">
+									<input type="checkbox" onChange={this.onSelectToggle} className="row-select-toggle" />
+									<span className="checkmark"></span>
+								</label>
+							)}
+							{columns.map((column) => (
+								<div key={column.name} className="column column-head" data-name={column.name}>
+									{column.label}
+									{column.sortable && (
+										<div className="sorting-icons">
+											<div
+												onClick={() => this.sortRows(column, "up")}
+												className={
+													sorting?.column === column && sorting.direction === "up"
+														? "selected sort-up"
+														: "sort-up"
+												}>
+												<span />
+											</div>
+											<div
+												onClick={() => this.sortRows(column, "down")}
+												className={
+													sorting?.column === column && sorting.direction === "down"
+														? "selected sort-down"
+														: "sort-down"
+												}>
+												<span />
+											</div>
+										</div>
+									)}
+									{resizeable && <span className="resize-handle"></span>}
+								</div>
+							))}
+						</div>
+						<div className="table-body">
+							{sortedRows.map((row, i) => (
+								<div onClick={(e) => this.onRowClick(e, row._index)} className={this.rowClassList(i, row._index)} key={i}>
+									<div className="inner" style={{ display: "grid", gridTemplateColumns }}>
+										{select === "multi" && (
+											<label className="multi-select select-container">
+												<input
+													type="checkbox"
+													onChange={() => this.onSelectRow(i)}
+													checked={selectedRows.includes(row._index)}
+													className="row-select"
+												/>
+												<span className="checkmark"></span>
+											</label>
+										)}
+										{columns.map((column, ii) => (
+											<div key={ii} className="cell">
+												{row[column.name]}
+											</div>
+										))}
+
+										<div className="right-icon">{rightIcon}</div>
 									</div>
 								</div>
-							)}
-							{resizeable && <span className="resize-handle"></span>}
+							))}
 						</div>
-					))}
-				</div>
-				<div className="table-body">
-					{sortedRows.map((row, i) => (
-						<div onClick={(e) => this.onRowClick(e, row._index)} className={this.rowClassList(i, row._index)} key={i}>
-							<div className="inner" style={{ display: "grid", gridTemplateColumns }}>
-								{select === "multi" && (
-									<label className="multi-select select-container">
-										<input
-											type="checkbox"
-											onChange={() => this.onSelectRow(i)}
-											checked={selectedRows.includes(row._index)}
-											className="row-select"
-										/>
-										<span className="checkmark"></span>
-									</label>
-								)}
-								{columns.map((column, ii) => (
-									<div key={ii} className="cell">
-										{row[column.name]}
+					</>
+				)}
+				{/**
+				
+												MOBILE
+				
+				*/}
+				{isMobile && (
+					<div className="table-body">
+						{sortedRows.map((row, i) => (
+							<div onClick={(e) => this.onRowClick(e, row._index)} className={this.rowClassList(i, row._index)} key={i}>
+								<div className="inner" style={{ display: "grid", gridTemplateColumns }}>
+									{select === "multi" && (
+										<label className="multi-select select-container">
+											<input
+												type="checkbox"
+												onChange={() => this.onSelectRow(i)}
+												checked={selectedRows.includes(row._index)}
+												className="row-select"
+											/>
+											<span className="checkmark"></span>
+										</label>
+									)}
+									<div className="columns">
+										{columns.map((column, ii) => (
+											<div key={ii} className="column">
+												<div className="label">{column.label}</div>
+												<div className="value">{row[column.name]}</div>
+											</div>
+										))}
 									</div>
-								))}
 
-								<div className="right-icon">{rightIcon}</div>
+									<div className="right-icon">{rightIcon}</div>
+								</div>
 							</div>
-						</div>
-					))}
-				</div>
+						))}
+					</div>
+				)}
 			</div>
 		);
 	}

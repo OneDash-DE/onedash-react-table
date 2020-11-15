@@ -114,3 +114,16 @@ html
 				-webkit-transform: rotate(45deg)
 				-ms-transform: rotate(45deg)
 				transform: rotate(45deg)
+
+	&.is-mobile
+		.right-icon
+			display: flex
+			justify-content: center
+			align-items: center
+			.right-chevron::before
+				top: 0
+
+		.column
+			margin: 5px 0px
+			.label
+				font-weight: bold
