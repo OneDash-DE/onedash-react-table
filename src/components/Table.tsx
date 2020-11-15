@@ -177,7 +177,7 @@ class Table extends Component<TableProps> {
 	};
 
 	onSearchChange = (searchString: string) => {
-		this.setState({ searchString: searchString.toLowerCase(), sorting: undefined });
+		this.setState({ searchString: searchString.toLowerCase() });
 	};
 
 	buildToolbar = (children: any, elements: any[]) => {
@@ -196,7 +196,8 @@ class Table extends Component<TableProps> {
 						child,
 						{
 							key: i,
-							_onChange: this.onSearchChange
+							_onChange: this.onSearchChange,
+							_value: this.state.searchString
 						},
 						childElements
 					);

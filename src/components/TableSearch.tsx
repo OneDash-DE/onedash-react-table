@@ -1,6 +1,7 @@
 import React from "react";
 
 interface TableSearchProps {
+	_value?: string;
 	_onChange?: (value: string) => void;
 }
 const TableSearch = (props: TableSearchProps) => {
@@ -15,7 +16,7 @@ const TableSearch = (props: TableSearchProps) => {
 		if (timeout) clearTimeout(timeout);
 		timeout = setTimeout(sendData, 500);
 	};
-	return <input onChange={onChange} className="table-search" />;
+	return <input value={props._value} onChange={onChange} className="table-search" />;
 };
 
 export default TableSearch;
