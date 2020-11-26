@@ -1,0 +1,104 @@
+import { Meta, Story, Canvas } from "@storybook/addon-docs/blocks";
+import Table from "../Table";
+import Column from "../Column";
+import { generateFakeData } from "../../DataGenerator";
+import "./style.sass";
+import "./table.sass";
+
+export const rows = generateFakeData(20);
+
+<Meta title="Components/Table" component={Table} />
+
+# Table
+
+## Small Example
+
+```jsx
+<Table select="click" rows={[]} selectedRows={[1, 2]}>
+	<Column name="firstName" label="Vorname" sortable />
+	<Column name="lastName" label="Nachname" />
+	<Column name="age" label="Alter" sortable />
+	<Column name="address" label="Adresse" />
+</Table>
+```
+
+<Canvas>
+	<Story
+		name="Small Example"
+		args={{
+			select: "click",
+			rows,
+			selectedRows: [1, 2]
+		}}>
+		{(args) => (
+			<Table {...args}>
+				<Column name="firstName" label="Vorname" sortable />
+				<Column name="lastName" label="Nachname" />
+				<Column name="age" label="Alter" sortable />
+				<Column name="address" label="Adresse" />
+			</Table>
+		)}
+	</Story>
+</Canvas>
+
+## Row icon
+
+```jsx
+<Table select="click" rows={[]} selectedRows={[1, 2]} rightIcon={<span className="right-chevron"></span>}>
+	<Column name="firstName" label="Vorname" sortable />
+	<Column name="lastName" label="Nachname" />
+	<Column name="age" label="Alter" sortable />
+	<Column name="address" label="Adresse" />
+</Table>
+```
+
+<Canvas>
+	<Story
+		name="Row Icon"
+		args={{
+			select: "click",
+			rows,
+			selectedRows: [1, 2],
+			rightIcon: <span className="right-chevron"></span>
+		}}>
+		{(args) => (
+			<Table {...args}>
+				<Column name="firstName" label="Vorname" sortable />
+				<Column name="lastName" label="Nachname" />
+				<Column name="age" label="Alter" sortable />
+				<Column name="address" label="Adresse" />
+			</Table>
+		)}
+	</Story>
+</Canvas>
+
+## Searchbar
+
+```jsx
+<Table select="click" rows={[]} selectedRows={[1, 2]} rightIcon={<span className="right-chevron"></span>}>
+	<Column name="firstName" label="Vorname" sortable />
+	<Column name="lastName" label="Nachname" />
+	<Column name="age" label="Alter" sortable />
+	<Column name="address" label="Adresse" />
+</Table>
+```
+
+<Canvas>
+	<Story
+		name="Search"
+		args={{
+			select: "click",
+			rows,
+			searchString: "Hello",
+			selectedRows: [1, 2]
+		}}>
+		{(args) => (
+			<Table {...args}>
+				<Column name="firstName" label="Vorname" sortable />
+				<Column name="lastName" label="Nachname" />
+				<Column name="age" label="Alter" sortable />
+				<Column name="address" label="Adresse" />
+			</Table>
+		)}
+	</Story>
+</Canvas>
