@@ -21,7 +21,7 @@
 		"preinstall": "node -e \"!process.env.npm_config_user_agent.startsWith('npm/') && !console.log('Use npm to install dependencies in this repository\\n') && process.exit(1)\"",
 		"install-all": "npm i && cd example && npm i",
 		"storybook": "start-storybook -p 6006",
-		"build-storybook": "build-storybook"
+		"build-storybook": "build-storybook -o example"
 	},
 	"peerDependencies": {
 		"react": "^17.0.1",
