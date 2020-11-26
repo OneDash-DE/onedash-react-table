@@ -5,4 +5,4 @@
 
 # React.js table component
 
-The documentation and examples can be found [here](https://react-table.onedash.de).
+The documentation and examples can be found [here](https://react-tables.onedash.de/).
