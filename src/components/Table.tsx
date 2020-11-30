@@ -169,7 +169,7 @@ class Table extends Component<TableProps> {
 	};
 
 	tableClass = () => {
-		let className = "onedash-table";
+		let className = "onedash-table-v2";
 		if (this.state.isMobile) className += " is-mobile";
 		return className;
 	};
