@@ -176,7 +176,7 @@ class Table extends Component<TableProps> {
 
 	render() {
 		const { columns, selectedRows, sorting, isMobile } = this.state;
-		const { resizeable, rows, select, rightIcon, searchString } = this.props;
+		const { resizeable, rows, select, rightIcon, searchString, style } = this.props;
 		let sortedRows: any[] = JSON.parse(JSON.stringify(rows ?? []));
 		const gridTemplateColumns = isMobile ? this.getMobileGridColumns() : this.getDesktopGridColumns();
 
@@ -215,7 +215,7 @@ class Table extends Component<TableProps> {
 		}
 
 		return (
-			<div ref={this.table} className={this.tableClass()}>
+			<div ref={this.table} style={style} className={this.tableClass()}>
 				{/**
 				
 												Desktop

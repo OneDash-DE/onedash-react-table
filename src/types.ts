@@ -10,6 +10,8 @@ export interface TableProps {
 	onRowSelect?: (selectedRows?: number[], addedRows?: number[]) => void;
 	onRowClick?: (index?: number, row?: any) => void;
 
+	style?: React.CSSProperties;
+
 	rightIcon?: JSX.Element;
 
 	minWidth?: number;
