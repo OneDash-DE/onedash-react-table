@@ -130,8 +130,8 @@ class Table extends Component<TableProps> {
 		this.setState({ selectedRows });
 	};
 
-	onRowClick = (e: any, rowNum: number) => {
-		if (e.target.classList.contains("inner")) return;
+	onRowClick = (_e: any, rowNum: number) => {
+		// Why? if (e.target.classList.contains("inner")) return;
 		this.onSelectRow(rowNum);
 	};
 
