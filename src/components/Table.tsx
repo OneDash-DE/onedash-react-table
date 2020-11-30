@@ -45,7 +45,7 @@ class Table extends Component<TableProps> {
 		window.addEventListener("resize", this.checkTableWidth);
 		this.getColumns();
 		this.setState({
-			selectedRows: this.props.selectedRows
+			selectedRows: this.props.selectedRows ?? []
 		});
 	}
 
