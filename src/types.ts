@@ -29,6 +29,7 @@ export interface ColumnProps {
 	width?: string;
 
 	formattingFunction?: (value: any, row: any) => any;
+	className?: string;
 }
 export interface ColumnItem extends ColumnProps {
 	ref?: any;

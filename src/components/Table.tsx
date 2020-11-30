@@ -231,7 +231,7 @@ class Table extends Component<TableProps> {
 								</label>
 							)}
 							{columns.map((column) => (
-								<div key={column.name} className="column column-head" data-name={column.name}>
+								<div key={column.name} className={"column column-head " + column.className ?? ""} data-name={column.name}>
 									{column.label}
 									{column.sortable && (
 										<div className="sorting-icons">
@@ -275,7 +275,7 @@ class Table extends Component<TableProps> {
 											</label>
 										)}
 										{columns.map((column, ii) => (
-											<div key={ii} className="cell">
+											<div key={ii} className={"cell " + column.className ?? ""}>
 												{column.formattingFunction
 													? column.formattingFunction(row[column.name], row)
 													: row[column.name]}
@@ -322,7 +322,7 @@ class Table extends Component<TableProps> {
 									)}
 									<div className="columns">
 										{columns.map((column, ii) => (
-											<div key={ii} className="column">
+											<div key={ii} className={"column " + column.className ?? ""}>
 												<div className="label">{column.label}</div>
 												<div className="value">
 													{column.formattingFunction
