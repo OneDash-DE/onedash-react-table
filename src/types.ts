@@ -1,5 +1,5 @@
 export interface TableProps {
-	rows: {}[];
+	rows?: {}[];
 	selectedRows?: number[];
 
 	select?: "single" | "click" | "multi" | "none";
@@ -27,6 +27,8 @@ export interface ColumnProps {
 	sortingFunction?: (rows: any[]) => any[];
 
 	width?: string;
+
+	formattingFunction: (value: any, row: any) => any;
 }
 export interface ColumnItem extends ColumnProps {
 	ref?: any;

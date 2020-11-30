@@ -62,6 +62,7 @@ class Table extends Component<TableProps> {
 	}
 
 	calculateColumnSizes = () => {
+		if (!this.props.rows) return;
 		const columns = this.state.columns;
 
 		// Take maximum 30 rows to decrease load
@@ -116,7 +117,7 @@ class Table extends Component<TableProps> {
 
 	onSelectRow = (rowNum: number) => {
 		if (!this.props.select || this.props.select === "none") return;
-		if (this.props.select === "click") return this.props.onRowClick?.(rowNum, this.props.rows[rowNum]);
+		if (this.props.select === "click") return this.props.onRowClick?.(rowNum, this.props.rows?.[rowNum]);
 
 		const selectedRows = this.state.selectedRows;
 		const index = selectedRows.indexOf(rowNum);
@@ -135,6 +136,7 @@ class Table extends Component<TableProps> {
 	};
 
 	onSelectToggle = (e: any) => {
+		if (!this.props.rows) return;
 		const isChecked = e.target.checked;
 		const selectedRows = [];
 		if (isChecked) {
@@ -274,7 +276,9 @@ class Table extends Component<TableProps> {
 										)}
 										{columns.map((column, ii) => (
 											<div key={ii} className="cell">
-												{row[column.name]}
+												{column.formattingFunction
+													? column.formattingFunction(row[column.name], row)
+													: row[column.name]}
 											</div>
 										))}
 
@@ -282,14 +286,16 @@ class Table extends Component<TableProps> {
 									</div>
 								</div>
 							))}
-							{sortedRows.length === 0 && rows.length > 0 && (
+							{sortedRows.length === 0 && rows && rows.length > 0 && (
 								<div className="no-entry-found info-message">
 									{this.props.textNoItemFound?.(searchString ?? "") ??
 										`No entry with the value "${searchString}" can be found`}
 								</div>
 							)}
 
-							{rows.length === 0 && <div className="no-rows info-message">{this.props.textNoRows ?? `Missing data`}</div>}
+							{(!rows || rows.length === 0) && (
+								<div className="no-rows info-message">{this.props.textNoRows ?? `Missing data`}</div>
+							)}
 						</div>
 					</>
 				)}
@@ -318,7 +324,11 @@ class Table extends Component<TableProps> {
 										{columns.map((column, ii) => (
 											<div key={ii} className="column">
 												<div className="label">{column.label}</div>
-												<div className="value">{row[column.name]}</div>
+												<div className="value">
+													{column.formattingFunction
+														? column.formattingFunction(row[column.name], row)
+														: row[column.name]}
+												</div>
 											</div>
 										))}
 									</div>
@@ -328,14 +338,16 @@ class Table extends Component<TableProps> {
 							</div>
 						))}
 
-						{sortedRows.length === 0 && rows.length > 0 && (
+						{rows && sortedRows.length === 0 && rows.length > 0 && (
 							<div className="no-entry-found info-message">
 								{this.props.textNoItemFound?.(searchString ?? "") ??
 									`No entry with the value "${searchString}" can be found`}
 							</div>
 						)}
 
-						{rows.length === 0 && <div className="no-rows info-message">{this.props.textNoRows ?? `Missing data`}</div>}
+						{(!rows || rows.length === 0) && (
+							<div className="no-rows info-message">{this.props.textNoRows ?? `Missing data`}</div>
+						)}
 					</div>
 				)}
 			</div>

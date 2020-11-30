@@ -72,6 +72,38 @@ export const rows = generateFakeData(20);
 	</Story>
 </Canvas>
 
+## Formatting Function
+
+This example multiplies the age of a person by 10.
+
+```jsx
+<Table select="click" rows={[]} selectedRows={[1, 2]} rightIcon={<span className="right-chevron"></span>}>
+	<Column name="firstName" label="Vorname" sortable />
+	<Column name="lastName" label="Nachname" />
+	<Column name="age" formattingFunction={(value) => value * 10} label="Alter" sortable />
+	<Column name="address" label="Adresse" />
+</Table>
+```
+
+<Canvas>
+	<Story
+		name="Formatting Function"
+		args={{
+			select: "click",
+			rows,
+			selectedRows: [1, 2]
+		}}>
+		{(args) => (
+			<Table {...args}>
+				<Column name="firstName" label="Vorname" sortable />
+				<Column name="lastName" label="Nachname" />
+				<Column formattingFunction={(value) => value * 10} name="age" label="Alter" sortable />
+				<Column name="address" label="Adresse" />
+			</Table>
+		)}
+	</Story>
+</Canvas>
+
 ## Searchbar
 
 ```jsx
