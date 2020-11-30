@@ -177,7 +177,7 @@ class Table extends Component<TableProps> {
 	render() {
 		const { columns, selectedRows, sorting, isMobile } = this.state;
 		const { resizeable, rows, select, rightIcon, searchString } = this.props;
-		let sortedRows: any[] = JSON.parse(JSON.stringify(rows));
+		let sortedRows: any[] = JSON.parse(JSON.stringify(rows ?? []));
 		const gridTemplateColumns = isMobile ? this.getMobileGridColumns() : this.getDesktopGridColumns();
 
 		// All rows get a _index property to recognize them
