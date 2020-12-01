@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { ColumnItem, TableProps } from "../types";
 import Column from "./Column";
-import TableSearch from "./TableSearch";
 
 class Table extends Component<TableProps> {
 	minWidth: number = 0;
@@ -12,9 +11,7 @@ class Table extends Component<TableProps> {
 		selectedRows: [] as number[],
 		sorting: undefined as undefined | { direction: "up" | "down"; column: ColumnItem },
 		ratios: [] as number[],
-		isMobile: false,
-		toolbar: [] as any[],
-		searchString: undefined as undefined | string
+		isMobile: false
 	};
 
 	getColumns = () => {
@@ -30,12 +27,13 @@ class Table extends Component<TableProps> {
 				columns.push(columnItem);
 			}
 		});
+
 		this.setState({ columns }, this.calculateColumnSizes);
 	};
 
 	checkTableWidth = () => {
 		if (this.props.disableMobile) return;
-		let isMobile = (this.table.current?.offsetWidth ?? 0) < (this.props.minWidth ?? this.minWidth);
+		const isMobile = (this.table.current?.offsetWidth ?? 0) < (this.props.minWidth ?? this.minWidth);
 		if (this.state.isMobile !== isMobile) {
 			this.setState({
 				isMobile
@@ -46,17 +44,14 @@ class Table extends Component<TableProps> {
 	componentDidMount() {
 		window.addEventListener("resize", this.checkTableWidth);
 		this.getColumns();
-		const toolbar = this.buildToolbar(this.props.children, []);
-		this.setState({ toolbar });
 		this.setState({
 			selectedRows: this.props.selectedRows
 		});
 	}
+
 	componentDidUpdate(latestProps: any) {
 		if (latestProps.children !== this.props.children) {
 			this.getColumns();
-			const toolbar = this.buildToolbar(this.props.children, []);
-			this.setState({ toolbar });
 		}
 		if (latestProps.selectedRows !== this.props.selectedRows) {
 			this.setState({ selectedRows: this.props.selectedRows });
@@ -149,6 +144,7 @@ class Table extends Component<TableProps> {
 		}
 		this.setState({ selectedRows });
 	};
+
 	rowClassList = (i: number, origIndex: number) => {
 		let className = "row";
 		if (i % 2 === 0) {
@@ -176,50 +172,9 @@ class Table extends Component<TableProps> {
 		return className;
 	};
 
-	onSearchChange = (searchString: string) => {
-		this.setState({ searchString: searchString.toLowerCase() });
-	};
-
-	buildToolbar = (children: any, elements: any[]) => {
-		React.Children.forEach(children, (child: any, i) => {
-			if (!child) return;
-			let childElements = [] as any[];
-			if (child.props && child.props.children && typeof child.props.children === "object") {
-				childElements = this.buildToolbar(child.props.children, []);
-			}
-
-			switch (child.type) {
-				case Column:
-					return;
-				case TableSearch:
-					const newEl = React.cloneElement(
-						child,
-						{
-							key: i,
-							_onChange: this.onSearchChange,
-							_value: this.state.searchString
-						},
-						childElements
-					);
-					elements.push(newEl);
-					break;
-
-				default:
-					if (childElements.length > 0) {
-						const newEl = React.cloneElement(child, { key: i }, childElements);
-						elements.push(newEl);
-					} else {
-						elements.push(child);
-					}
-			}
-		});
-
-		return elements;
-	};
-
 	render() {
-		const { columns, selectedRows, sorting, isMobile, toolbar, searchString } = this.state;
-		const { resizeable, rows, select, rightIcon } = this.props;
+		const { columns, selectedRows, sorting, isMobile } = this.state;
+		const { resizeable, rows, select, rightIcon, searchString } = this.props;
 		let sortedRows: any[] = JSON.parse(JSON.stringify(rows));
 		const gridTemplateColumns = isMobile ? this.getMobileGridColumns() : this.getDesktopGridColumns();
 
@@ -251,18 +206,14 @@ class Table extends Component<TableProps> {
 			sortedRows = sortedRows.filter((x) =>
 				Object.keys(x).find((propName) => {
 					const val = x[propName];
-					if (typeof val === "object" && typeof val === "function") return;
-					return String(val).toLowerCase().indexOf(searchString) !== -1;
+					if (typeof val === "object" && typeof val === "function") return undefined;
+					return String(val).toLowerCase().indexOf(searchString.toLowerCase()) !== -1;
 				})
 			);
 		}
 
-		console.log("moin");
-
 		return (
 			<div ref={this.table} className={this.tableClass()}>
-				{toolbar}
-
 				{/**
 				
 												Desktop
@@ -331,6 +282,14 @@ class Table extends Component<TableProps> {
 									</div>
 								</div>
 							))}
+							{sortedRows.length === 0 && rows.length > 0 && (
+								<div className="no-entry-found info-message">
+									{this.props.textNoItemFound?.(searchString ?? "") ??
+										`No entry with the value "${searchString}" can be found`}
+								</div>
+							)}
+
+							{rows.length === 0 && <div className="no-rows info-message">{this.props.textNoRows ?? `Missing data`}</div>}
 						</div>
 					</>
 				)}
@@ -368,6 +327,15 @@ class Table extends Component<TableProps> {
 								</div>
 							</div>
 						))}
+
+						{sortedRows.length === 0 && rows.length > 0 && (
+							<div className="no-entry-found info-message">
+								{this.props.textNoItemFound?.(searchString ?? "") ??
+									`No entry with the value "${searchString}" can be found`}
+							</div>
+						)}
+
+						{rows.length === 0 && <div className="no-rows info-message">{this.props.textNoRows ?? `Missing data`}</div>}
 					</div>
 				)}
 			</div>
