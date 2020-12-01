@@ -276,9 +276,9 @@ class Table extends Component<TableProps> {
 										)}
 										{columns.map((column, ii) => (
 											<div key={ii} className={"cell " + (column.className ?? "")}>
-												{column.formattingFunction
+												{(column.formattingFunction
 													? column.formattingFunction(row[column.name], row)
-													: row[column.name]}
+													: row[column.name]) ?? column.noEntryDesktopFallback}
 											</div>
 										))}
 
@@ -325,9 +325,11 @@ class Table extends Component<TableProps> {
 											<div key={ii} className={"column " + (column.className ?? "")}>
 												<div className="label">{column.label}</div>
 												<div className="value">
-													{column.formattingFunction
+													{(column.formattingFunction
 														? column.formattingFunction(row[column.name], row)
-														: row[column.name]}
+														: row[column.name]) ??
+														column.noEntryMobileFallback ??
+														"N/A"}
 												</div>
 											</div>
 										))}

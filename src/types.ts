@@ -32,6 +32,9 @@ export interface ColumnProps {
 
 	formattingFunction?: (value: any, row: any) => any;
 	className?: string;
+
+	noEntryMobileFallback?: string | JSX.Element;
+	noEntryDesktopFallback?: string | JSX.Element;
 }
 export interface ColumnItem extends ColumnProps {
 	ref?: any;
