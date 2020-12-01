@@ -76,7 +76,7 @@ class Table extends Component<TableProps> {
 
 		// Add Column Width => Small values but longer column label
 		columns.forEach((column, i) => {
-			sizes[i] += (column.label?.length ?? 0 + 30) * 15;
+			sizes[i] += (column.label?.length ?? 0 + 30) * 5;
 		});
 
 		const total = sizes.reduce((a, b) => a + b, 0);
