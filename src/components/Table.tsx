@@ -44,14 +44,18 @@ class Table extends Component<TableProps> {
 	componentDidMount() {
 		window.addEventListener("resize", this.checkTableWidth);
 		this.getColumns();
-		this.setState({
-			selectedRows: this.props.selectedRows ?? []
-		});
+		this.setState(
+			{
+				selectedRows: this.props.selectedRows ?? []
+			},
+			this.checkTableWidth
+		);
 	}
 
 	componentDidUpdate(latestProps: any) {
 		if (latestProps.children !== this.props.children) {
 			this.getColumns();
+			this.checkTableWidth();
 		}
 		if (latestProps.selectedRows !== this.props.selectedRows) {
 			this.setState({ selectedRows: this.props.selectedRows });
@@ -76,7 +80,7 @@ class Table extends Component<TableProps> {
 
 		// Add Column Width => Small values but longer column label
 		columns.forEach((column, i) => {
-			sizes[i] += (column.label?.length ?? 0 + 30) * 5;
+			sizes[i] += (column.label?.length ?? 0 + 30) * 10;
 		});
 
 		const total = sizes.reduce((a, b) => a + b, 0);

@@ -104,10 +104,10 @@ This example multiplies the age of a person by 10.
 	</Story>
 </Canvas>
 
-## Searchbar
+## Searchstring
 
 ```jsx
-<Table select="click" rows={[]} selectedRows={[1, 2]} rightIcon={<span className="right-chevron"></span>}>
+<Table select="click" searchString="<INPUT VALUE>" rows={[]} selectedRows={[1, 2]} rightIcon={<span className="right-chevron"></span>}>
 	<Column name="firstName" label="Vorname" sortable />
 	<Column name="lastName" label="Nachname" />
 	<Column name="age" label="Alter" sortable />
@@ -117,7 +117,7 @@ This example multiplies the age of a person by 10.
 
 <Canvas>
 	<Story
-		name="Search"
+		name="Searchstring"
 		args={{
 			select: "click",
 			rows,

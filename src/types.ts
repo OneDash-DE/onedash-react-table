@@ -27,11 +27,16 @@ export interface ColumnProps {
 	label?: string;
 	sortable?: boolean;
 	sortingFunction?: (rows: any[]) => any[];
+	formattingFunction?: (value: any, row: any) => any;
 
 	width?: string;
 
-	formattingFunction?: (value: any, row: any) => any;
 	className?: string;
+
+	editable?: {
+		rowIndexes?: number[];
+		type: "number" | "string";
+	};
 
 	noEntryMobileFallback?: string | JSX.Element;
 	noEntryDesktopFallback?: string | JSX.Element;
