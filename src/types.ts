@@ -27,7 +27,7 @@ export interface ColumnProps {
 	label?: string;
 	sortable?: boolean;
 	sortingFunction?: (rows: any[]) => any[];
-	formattingFunction?: (value: any, row: any) => any;
+	formattingFunction?: (value: any, row: any, index: number) => any;
 
 	width?: string;
 
