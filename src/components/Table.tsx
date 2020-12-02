@@ -38,7 +38,7 @@ class Table extends Component<TableProps> {
 				React.Children.forEach(child.props.children as any, (subchild) => {
 					if (subchild.type === Cell) {
 						const clone = React.cloneElement(subchild, {
-							_value: child.props.row[subchild.props.name],
+							_value: child.props.row?.[subchild.props.name],
 							_row: child.props.row
 						});
 
@@ -95,7 +95,7 @@ class Table extends Component<TableProps> {
 		const sizes: number[] = new Array(columns.length).fill(0);
 		rows.forEach((row) => {
 			columns.forEach((column, i) => {
-				sizes[i] += String(row.row[column.name]).length;
+				sizes[i] += String(row.row?.[column.name]).length;
 			});
 		});
 
@@ -221,8 +221,8 @@ class Table extends Component<TableProps> {
 				sortedRows = sorting.column.sortingFunction(sortedRows);
 			} else {
 				sortedRows = sortedRows.sort((a, b) => {
-					const aVal = a.row[sorting.column.name];
-					const bVal = b.row[sorting.column.name];
+					const aVal = a.row?.[sorting.column.name];
+					const bVal = b.row?.[sorting.column.name];
 					if (typeof aVal === "string" && typeof bVal === "string") {
 						return sorting.direction === "up" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
 					} else if (typeof aVal === "number" && typeof bVal === "number") {
@@ -237,8 +237,8 @@ class Table extends Component<TableProps> {
 
 		if (searchString && searchString.length > 0) {
 			sortedRows = sortedRows.filter((x) =>
-				Object.keys(x.row).find((propName) => {
-					const val = x.row[propName];
+				Object.keys(x.row ?? {}).find((propName) => {
+					const val = x.row?.[propName];
 					if (typeof val === "object" && typeof val === "function") return undefined;
 					return String(val).toLowerCase().indexOf(searchString.toLowerCase()) !== -1;
 				})
