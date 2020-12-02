@@ -1,6 +1,8 @@
 import { Meta, Story, Canvas } from "@storybook/addon-docs/blocks";
 import Table from "../Table";
 import Column from "../Column";
+import Row from "../Row";
+import Cell from "../Cell";
 import { generateFakeData } from "../../DataGenerator";
 import "./style.sass";
 import "./table.sass";
@@ -11,31 +13,81 @@ export const rows = generateFakeData(20);
 
 # Table
 
-## Small Example
+## Basic
 
 ```jsx
-<Table select="click" rows={[]} selectedRows={[1, 2]}>
-	<Column name="firstName" label="Vorname" sortable />
+<Table>
+	<Column name="firstName" label="Vorname" />
 	<Column name="lastName" label="Nachname" />
-	<Column name="age" label="Alter" sortable />
+	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
+	{rows.map((row, i) => (
+		<Row key={i} row={row}>
+			<Cell name="firstName" />
+			<Cell name="lastName" />
+			<Cell name="age" />
+			<Cell name="address" />
+		</Row>
+	))}
 </Table>
 ```
 
 <Canvas>
-	<Story
-		name="Small Example"
-		args={{
-			select: "click",
-			rows,
-			selectedRows: [1, 2]
-		}}>
+	<Story name="Basic" args={{}}>
+		{(args) => (
+			<Table {...args}>
+				<Column name="firstName" label="Vorname" />
+				<Column name="lastName" label="Nachname" />
+				<Column name="age" label="Alter" />
+				<Column name="address" label="Adresse" />
+				{rows.map((row, i) => (
+					<Row key={i} row={row}>
+						<Cell name="firstName" />
+						<Cell name="lastName" />
+						<Cell name="age" />
+						<Cell name="address" />
+					</Row>
+				))}
+			</Table>
+		)}
+	</Story>
+</Canvas>
+
+## Order by
+
+```jsx
+<Table>
+	<Column name="firstName" label="Vorname" />
+	<Column name="lastName" label="Nachname" />
+	<Column name="age" label="Alter" />
+	<Column name="address" label="Adresse" />
+	{rows.map((row, i) => (
+		<Row key={i} row={row}>
+			<Cell name="firstName" />
+			<Cell name="lastName" />
+			<Cell name="age" />
+			<Cell name="address" />
+		</Row>
+	))}
+</Table>
+```
+
+<Canvas>
+	<Story name="Order by" args={{}}>
 		{(args) => (
 			<Table {...args}>
 				<Column name="firstName" label="Vorname" sortable />
 				<Column name="lastName" label="Nachname" />
 				<Column name="age" label="Alter" sortable />
 				<Column name="address" label="Adresse" />
+				{rows.map((row, i) => (
+					<Row key={i} row={row}>
+						<Cell name="firstName" />
+						<Cell name="lastName" />
+						<Cell name="age" />
+						<Cell name="address" />
+					</Row>
+				))}
 			</Table>
 		)}
 	</Story>
@@ -44,11 +96,19 @@ export const rows = generateFakeData(20);
 ## Row icon
 
 ```jsx
-<Table select="click" rows={[]} selectedRows={[1, 2]} rightIcon={<span className="right-chevron"></span>}>
-	<Column name="firstName" label="Vorname" sortable />
+<Table rightIcon={<span className="right-chevron"></span>}>
+	<Column name="firstName" label="Vorname" />
 	<Column name="lastName" label="Nachname" />
-	<Column name="age" label="Alter" sortable />
+	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
+	{rows.map((row, i) => (
+		<Row key={i} row={row}>
+			<Cell name="firstName" />
+			<Cell name="lastName" />
+			<Cell name="age" />
+			<Cell name="address" />
+		</Row>
+	))}
 </Table>
 ```
 
@@ -56,17 +116,22 @@ export const rows = generateFakeData(20);
 	<Story
 		name="Row Icon"
 		args={{
-			select: "click",
-			rows,
-			selectedRows: [1, 2],
 			rightIcon: <span className="right-chevron"></span>
 		}}>
 		{(args) => (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" sortable />
+				<Column name="firstName" label="Vorname" />
 				<Column name="lastName" label="Nachname" />
-				<Column name="age" label="Alter" sortable />
+				<Column name="age" label="Alter" />
 				<Column name="address" label="Adresse" />
+				{rows.map((row, i) => (
+					<Row key={i} row={row}>
+						<Cell name="firstName" />
+						<Cell name="lastName" />
+						<Cell name="age" />
+						<Cell name="address" />
+					</Row>
+				))}
 			</Table>
 		)}
 	</Story>
@@ -74,31 +139,41 @@ export const rows = generateFakeData(20);
 
 ## Formatting Function
 
-This example multiplies the age of a person by 10.
+This example multiplies the age of a person by 10 and renames all persons to John.
 
 ```jsx
-<Table select="click" rows={[]} selectedRows={[1, 2]} rightIcon={<span className="right-chevron"></span>}>
-	<Column name="firstName" label="Vorname" sortable />
+<Table>
+	<Column name="firstName" label="Vorname" />
 	<Column name="lastName" label="Nachname" />
-	<Column name="age" formattingFunction={(value) => value * 10} label="Alter" sortable />
+	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
+	{rows.map((row, i) => (
+		<Row key={i} row={row}>
+			<Cell name="firstName">John</Cell>
+			<Cell name="lastName" />
+			<Cell name="age">{(age) => age * 10}</Cell>
+			<Cell name="address" />
+		</Row>
+	))}
 </Table>
 ```
 
 <Canvas>
-	<Story
-		name="Formatting Function"
-		args={{
-			select: "click",
-			rows,
-			selectedRows: [1, 2]
-		}}>
+	<Story name="Formatting Function" args={{}}>
 		{(args) => (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" sortable />
+				<Column name="firstName" label="Vorname" />
 				<Column name="lastName" label="Nachname" />
-				<Column formattingFunction={(value) => value * 10} name="age" label="Alter" sortable />
+				<Column name="age" label="Alter" />
 				<Column name="address" label="Adresse" />
+				{rows.map((row, i) => (
+					<Row key={i} row={row}>
+						<Cell name="firstName">John</Cell>
+						<Cell name="lastName" />
+						<Cell name="age">{(age) => age * 10}</Cell>
+						<Cell name="address" />
+					</Row>
+				))}
 			</Table>
 		)}
 	</Story>
@@ -107,11 +182,19 @@ This example multiplies the age of a person by 10.
 ## Searchstring
 
 ```jsx
-<Table select="click" searchString="<INPUT VALUE>" rows={[]} selectedRows={[1, 2]} rightIcon={<span className="right-chevron"></span>}>
-	<Column name="firstName" label="Vorname" sortable />
+<Table searchString="<INPUT VALUE>">
+	<Column name="firstName" label="Vorname" />
 	<Column name="lastName" label="Nachname" />
-	<Column name="age" label="Alter" sortable />
+	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
+	{rows.map((row, i) => (
+		<Row key={i} row={row}>
+			<Cell name="firstName" />
+			<Cell name="lastName" />
+			<Cell name="age" />
+			<Cell name="address" />
+		</Row>
+	))}
 </Table>
 ```
 
@@ -121,7 +204,7 @@ This example multiplies the age of a person by 10.
 		args={{
 			select: "click",
 			rows,
-			searchString: "Hello",
+			searchString: rows[0].firstName,
 			selectedRows: [1, 2]
 		}}>
 		{(args) => (
@@ -130,6 +213,100 @@ This example multiplies the age of a person by 10.
 				<Column name="lastName" label="Nachname" />
 				<Column name="age" label="Alter" sortable />
 				<Column name="address" label="Adresse" />
+				{rows.map((row, i) => (
+					<Row key={i} row={row}>
+						<Cell name="firstName" />
+						<Cell name="lastName" />
+						<Cell name="age" />
+						<Cell name="address" />
+					</Row>
+				))}
+			</Table>
+		)}
+	</Story>
+</Canvas>
+
+## CSS Class customizing
+
+```jsx
+<Table className="table-className">
+	<Column name="firstName" label="Vorname" />
+	<Column name="lastName" label="Nachname" />
+	<Column name="age" label="Alter" className="special" />
+	<Column name="address" label="Adresse" />
+	{rows.map((row, i) => (
+		<Row key={i} row={row} className={i === 3 ? "special" : ""}>
+			<Cell name="firstName" className={i === 5 ? "special" : ""} />
+			<Cell name="lastName" />
+			<Cell name="age" />
+			<Cell name="address" />
+		</Row>
+	))}
+</Table>
+```
+
+<Canvas>
+	<Story
+		name="CSS class customizing"
+		args={{
+			className: "table-className"
+		}}>
+		{(args) => (
+			<Table {...args}>
+				<Column name="firstName" label="Vorname" />
+				<Column name="lastName" label="Nachname" />
+				<Column name="age" label="Alter" className="special" />
+				<Column name="address" label="Adresse" />
+				{rows.map((row, i) => (
+					<Row key={i} row={row} className={i === 3 ? "special" : ""}>
+						<Cell name="firstName" className={i === 5 ? "special" : ""} />
+						<Cell name="lastName" />
+						<Cell name="age" />
+						<Cell name="address" />
+					</Row>
+				))}
+			</Table>
+		)}
+	</Story>
+</Canvas>
+
+## Select Rows
+
+It' possible to select rows either by click on one, or by selecting multiple rows. Moreover, with selectedRows property you can provide preselected rows.
+
+```jsx
+<Table select="multi" selectedRows={[3, 5]}>
+	<Column name="firstName" label="Vorname" />
+	<Column name="lastName" label="Nachname" />
+	<Column name="age" label="Alter" />
+	<Column name="address" label="Adresse" />
+	{rows.map((row, i) => (
+		<Row key={i} row={row}>
+			<Cell name="firstName" />
+			<Cell name="lastName" />
+			<Cell name="age" />
+			<Cell name="address" />
+		</Row>
+	))}
+</Table>
+```
+
+<Canvas>
+	<Story name="Select Rows" args={{ select: "multi", selectedRows: [3, 5] }}>
+		{(args) => (
+			<Table {...args}>
+				<Column name="firstName" label="Vorname" />
+				<Column name="lastName" label="Nachname" />
+				<Column name="age" label="Alter" />
+				<Column name="address" label="Adresse" />
+				{rows.map((row, i) => (
+					<Row key={i} row={row}>
+						<Cell name="firstName" />
+						<Cell name="lastName" />
+						<Cell name="age" />
+						<Cell name="address" />
+					</Row>
+				))}
 			</Table>
 		)}
 	</Story>

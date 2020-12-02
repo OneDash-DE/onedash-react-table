@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { ColumnItem, TableProps } from "../types";
+import { CellProps, ColumnItem, RowItem, RowProps, TableProps } from "../types";
+import Cell from "./Cell";
 import Column from "./Column";
+import Row from "./Row";
 
 class Table extends Component<TableProps> {
 	minWidth: number = 0;
@@ -8,6 +10,7 @@ class Table extends Component<TableProps> {
 
 	state = {
 		columns: [] as ColumnItem[],
+		rows: [] as RowItem[],
 		selectedRows: [] as number[],
 		sorting: undefined as undefined | { direction: "up" | "down"; column: ColumnItem },
 		ratios: [] as number[],
@@ -16,6 +19,7 @@ class Table extends Component<TableProps> {
 
 	getColumns = () => {
 		const columns: ColumnItem[] = [];
+		const rows: RowItem[] = [];
 		React.Children.forEach(this.props.children as any, (child) => {
 			if (!child) return;
 
@@ -25,10 +29,30 @@ class Table extends Component<TableProps> {
 					columnItem[propName] = child.props[propName];
 				}
 				columns.push(columnItem);
+			} else if (child.type === Row) {
+				const cells: any = {};
+				const rowItem: any = {};
+				for (const propName in child.props) {
+					rowItem[propName] = child.props[propName];
+				}
+				React.Children.forEach(child.props.children as any, (subchild) => {
+					if (subchild.type === Cell) {
+						const clone = React.cloneElement(subchild, {
+							_value: child.props.row[subchild.props.name],
+							_row: child.props.row
+						});
+
+						cells[subchild.props.name] = clone;
+					}
+				});
+				rowItem.cells = cells;
+				rows.push(rowItem);
 			}
 		});
-
-		this.setState({ columns }, this.calculateColumnSizes);
+		rows.forEach((row, i) => {
+			row.i = i;
+		});
+		this.setState({ columns, rows }, this.calculateColumnSizes);
 	};
 
 	checkTableWidth = () => {
@@ -60,21 +84,18 @@ class Table extends Component<TableProps> {
 		if (latestProps.selectedRows !== this.props.selectedRows) {
 			this.setState({ selectedRows: this.props.selectedRows });
 		}
-		if (latestProps.rows !== this.props.rows) {
-			this.calculateColumnSizes();
-		}
 	}
 
 	calculateColumnSizes = () => {
-		if (!this.props.rows) return;
+		if (!this.state.rows) return;
 		const columns = this.state.columns;
 
 		// Take maximum 30 rows to decrease load
-		const rows = this.props.rows.slice(0, 30);
+		const rows = this.state.rows.slice(0, 30);
 		const sizes: number[] = new Array(columns.length).fill(0);
 		rows.forEach((row) => {
 			columns.forEach((column, i) => {
-				sizes[i] += String(row[column.name]).length;
+				sizes[i] += String(row.row[column.name]).length;
 			});
 		});
 
@@ -119,9 +140,9 @@ class Table extends Component<TableProps> {
 		return templateString;
 	};
 
-	onSelectRow = (rowNum: number) => {
+	onSelectRow = (rowNum: number, row: RowProps) => {
 		if (!this.props.select || this.props.select === "none") return;
-		if (this.props.select === "click") return this.props.onRowClick?.(rowNum, this.props.rows?.[rowNum]);
+		if (this.props.select === "click") return this.props.onRowClick?.(rowNum, row);
 
 		const selectedRows = this.state.selectedRows;
 		const index = selectedRows.indexOf(rowNum);
@@ -134,24 +155,24 @@ class Table extends Component<TableProps> {
 		this.setState({ selectedRows });
 	};
 
-	onRowClick = (_e: any, rowNum: number) => {
+	onRowClick = (_e: any, row: RowItem) => {
 		// Why? if (e.target.classList.contains("inner")) return;
-		this.onSelectRow(rowNum);
+		this.onSelectRow(row.i, row);
 	};
 
 	onSelectToggle = (e: any) => {
-		if (!this.props.rows) return;
+		if (!this.state.rows) return;
 		const isChecked = e.target.checked;
 		const selectedRows = [];
 		if (isChecked) {
-			for (let i = 0; i < this.props.rows.length; i++) {
+			for (let i = 0; i < this.state.rows.length; i++) {
 				selectedRows.push(i);
 			}
 		}
 		this.setState({ selectedRows });
 	};
 
-	rowClassList = (i: number, origIndex: number) => {
+	rowClassList = (i: number, row: RowItem) => {
 		let className = "row";
 		if (i % 2 === 0) {
 			className += " even";
@@ -159,7 +180,9 @@ class Table extends Component<TableProps> {
 			className += " odd";
 		}
 		if (this.props.select === "click") className += " clickable";
-		if (this.state.selectedRows.includes(origIndex)) className += " selected";
+		if (this.state.selectedRows.includes(row.i)) className += " selected";
+		if (row.className) className += ` ${row.className}`;
+
 		return className;
 	};
 
@@ -178,14 +201,18 @@ class Table extends Component<TableProps> {
 		return className;
 	};
 
-	render() {
-		const { columns, selectedRows, sorting, isMobile } = this.state;
-		const { resizeable, rows, select, rightIcon, searchString, style } = this.props;
-		let sortedRows: any[] = JSON.parse(JSON.stringify(rows ?? []));
-		const gridTemplateColumns = isMobile ? this.getMobileGridColumns() : this.getDesktopGridColumns();
+	cellClassName = (column: ColumnItem, cell: CellProps) => {
+		let className = "cell";
+		if (column.className) className += ` ${column.className}`;
+		if (cell.className) className += ` ${cell.className}`;
+		return className;
+	};
 
-		// All rows get a _index property to recognize them
-		sortedRows.forEach((row, i) => (row._index = i));
+	render() {
+		const { columns, selectedRows, sorting, isMobile, rows } = this.state;
+		const { resizeable, select, rightIcon, searchString, style } = this.props;
+		let sortedRows: RowItem[] = [...rows] ?? [];
+		const gridTemplateColumns = isMobile ? this.getMobileGridColumns() : this.getDesktopGridColumns();
 
 		// Apply sorting
 		if (sorting) {
@@ -194,8 +221,8 @@ class Table extends Component<TableProps> {
 				sortedRows = sorting.column.sortingFunction(sortedRows);
 			} else {
 				sortedRows = sortedRows.sort((a, b) => {
-					const aVal = a[sorting.column.name];
-					const bVal = b[sorting.column.name];
+					const aVal = a.row[sorting.column.name];
+					const bVal = b.row[sorting.column.name];
 					if (typeof aVal === "string" && typeof bVal === "string") {
 						return sorting.direction === "up" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
 					} else if (typeof aVal === "number" && typeof bVal === "number") {
@@ -210,8 +237,8 @@ class Table extends Component<TableProps> {
 
 		if (searchString && searchString.length > 0) {
 			sortedRows = sortedRows.filter((x) =>
-				Object.keys(x).find((propName) => {
-					const val = x[propName];
+				Object.keys(x.row).find((propName) => {
+					const val = x.row[propName];
 					if (typeof val === "object" && typeof val === "function") return undefined;
 					return String(val).toLowerCase().indexOf(searchString.toLowerCase()) !== -1;
 				})
@@ -265,28 +292,33 @@ class Table extends Component<TableProps> {
 						</div>
 						<div className="table-body">
 							{sortedRows.map((row, i) => (
-								<div onClick={(e) => this.onRowClick(e, row._index)} className={this.rowClassList(i, row._index)} key={i}>
-									<div className="inner" style={{ display: "grid", gridTemplateColumns }}>
+								<div onClick={(e) => this.onRowClick(e, row)} className={this.rowClassList(i, row)} key={i}>
+									<div
+										className="inner"
+										style={{ display: "grid", gridTemplateColumns: row.gridColumns ?? gridTemplateColumns }}>
 										{select === "multi" && (
 											<label className="multi-select select-container">
 												<input
 													type="checkbox"
-													onChange={() => this.onSelectRow(i)}
-													checked={selectedRows.includes(row._index)}
+													onChange={() => this.onSelectRow(i, row)}
+													checked={selectedRows.includes(row.i)}
 													className="row-select"
 												/>
 												<span className="checkmark"></span>
 											</label>
 										)}
-										{columns.map((column, ii) => (
-											<div key={ii} className={"cell " + (column.className ?? "")}>
-												{(column.formattingFunction
-													? column.formattingFunction(row[column.name], row, ii)
-													: row[column.name]) ?? column.noEntryDesktopFallback}
-											</div>
-										))}
+										{columns.map((column, ii) => {
+											const cell = row.cells[column.name];
+											if (!cell) return <React.Fragment key={ii}></React.Fragment>;
 
-										<div className="right-icon">{rightIcon}</div>
+											return (
+												<div key={ii} className={this.cellClassName(column, cell.props as any)}>
+													{cell}
+												</div>
+											);
+										})}
+
+										{rightIcon && <div className="right-icon">{rightIcon}</div>}
 									</div>
 								</div>
 							))}
@@ -311,32 +343,30 @@ class Table extends Component<TableProps> {
 				{isMobile && (
 					<div className="table-body">
 						{sortedRows.map((row, i) => (
-							<div onClick={(e) => this.onRowClick(e, row._index)} className={this.rowClassList(i, row._index)} key={i}>
+							<div onClick={(e) => this.onRowClick(e, row)} className={this.rowClassList(i, row)} key={i}>
 								<div className="inner" style={{ display: "grid", gridTemplateColumns }}>
 									{select === "multi" && (
 										<label className="multi-select select-container">
 											<input
 												type="checkbox"
-												onChange={() => this.onSelectRow(i)}
-												checked={selectedRows.includes(row._index)}
+												onChange={() => this.onSelectRow(row.i, row)}
+												checked={selectedRows.includes(row.i)}
 												className="row-select"
 											/>
 											<span className="checkmark"></span>
 										</label>
 									)}
 									<div className="columns">
-										{columns.map((column, ii) => (
-											<div key={ii} className={"column " + (column.className ?? "")}>
-												<div className="label">{column.label}</div>
-												<div className="value">
-													{(column.formattingFunction
-														? column.formattingFunction(row[column.name], row, ii)
-														: row[column.name]) ??
-														column.noEntryMobileFallback ??
-														"N/A"}
+										{columns.map((column, ii) => {
+											const cell = row.cells[column.name];
+											if (!cell) return <React.Fragment key={ii}></React.Fragment>;
+											return (
+												<div key={ii} className={"column " + (column.className ?? "")}>
+													<div className="label">{column.label}</div>
+													<div className={"value" + this.cellClassName(column, cell.props as any)}>{cell}</div>
 												</div>
-											</div>
-										))}
+											);
+										})}
 									</div>
 
 									<div className="right-icon">{rightIcon}</div>

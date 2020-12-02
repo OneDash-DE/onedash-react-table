@@ -1,5 +1,6 @@
+import Cell from "./components/Cell";
+
 export interface TableProps {
-	rows?: {}[];
 	selectedRows?: number[];
 
 	select?: "single" | "click" | "multi" | "none";
@@ -27,20 +28,36 @@ export interface ColumnProps {
 	label?: string;
 	sortable?: boolean;
 	sortingFunction?: (rows: any[]) => any[];
-	formattingFunction?: (value: any, row: any, index: number) => any;
 
 	width?: string;
 
 	className?: string;
+}
+export interface CellProps {
+	row?: any;
+	className?: string;
 
-	editable?: {
-		rowIndexes?: number[];
-		type: "number" | "string";
-	};
+	noValue?: string | JSX.Element;
 
-	noEntryMobileFallback?: string | JSX.Element;
-	noEntryDesktopFallback?: string | JSX.Element;
+	_value: any;
+	_row: any;
+
+	children?: (value: any, row: any) => JSX.Element | string | number | boolean;
+}
+export interface RowProps {
+	_style?: React.CSSProperties;
+	row: {};
+	className?: string;
+	gridColumns?: string;
 }
 export interface ColumnItem extends ColumnProps {
 	ref?: any;
+}
+export interface CellItem extends CellProps {
+	ref?: any;
+}
+export interface RowItem extends RowProps {
+	ref?: any;
+	i: number;
+	cells: { [name: string]: Cell };
 }
