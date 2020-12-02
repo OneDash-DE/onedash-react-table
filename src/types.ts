@@ -104,11 +104,11 @@ export interface CellProps {
 	/**
 	 * DO NOT USE. FOR INTERNAL USE
 	 */
-	_value: any;
+	_value?: any;
 	/**
 	 * DO NOT USE. FOR INTERNAL USE
 	 */
-	_row: any;
+	_row?: any;
 
 	children?: (value: any, row: any) => JSX.Element | string | number | boolean;
 }
