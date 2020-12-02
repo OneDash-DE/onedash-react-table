@@ -88,6 +88,10 @@ export interface ColumnProps {
 }
 export interface CellProps {
 	/**
+	 * Object name
+	 */
+	name: string;
+	/**
 	 * Classname for this cell
 	 */
 	className?: string;
