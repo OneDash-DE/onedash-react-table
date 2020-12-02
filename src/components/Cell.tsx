@@ -5,7 +5,7 @@ class Cell extends Component<CellProps> {
 	render() {
 		if (this.props.children) {
 			if (typeof this.props.children === "function") {
-				return this.props.children(this.props._value, this.props.row);
+				return this.props.children(this.props._value, this.props._row);
 			} else {
 				return this.props.children;
 			}

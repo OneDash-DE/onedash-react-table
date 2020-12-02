@@ -210,7 +210,7 @@ class Table extends Component<TableProps> {
 
 	render() {
 		const { columns, selectedRows, sorting, isMobile, rows } = this.state;
-		const { resizeable, select, rightIcon, searchString, style } = this.props;
+		const { select, rightIcon, searchString, style } = this.props;
 		let sortedRows: RowItem[] = [...rows] ?? [];
 		const gridTemplateColumns = isMobile ? this.getMobileGridColumns() : this.getDesktopGridColumns();
 
@@ -286,7 +286,6 @@ class Table extends Component<TableProps> {
 											</div>
 										</div>
 									)}
-									{resizeable && <span className="resize-handle"></span>}
 								</div>
 							))}
 						</div>
