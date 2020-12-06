@@ -105,6 +105,8 @@ class Table extends Component<TableProps> {
 			console.log("----------------------------------------------------------");
 			console.log("Columns:");
 			console.log(columns);
+			console.log("Rows:");
+			console.log(rows);
 			console.log("Sizes [Without Label]:");
 			console.log(JSON.parse(JSON.stringify(sizes)));
 		}
