@@ -99,7 +99,7 @@ class Table extends Component<TableProps> {
 				if (typeof val === "string" || typeof val === "number") {
 					sizes[i] += String(val).length;
 				} else {
-				    // Default size for JSX Elements etc.
+					// Default size for JSX Elements etc.
 					sizes[i] += 100;
 				}
 			});
