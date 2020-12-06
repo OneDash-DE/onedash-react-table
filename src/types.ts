@@ -110,7 +110,7 @@ export interface CellProps {
 	 */
 	_row?: any;
 
-	children?: ((value: any, row: any) => JSX.Element | string | number | boolean) | string | number | boolean;
+	children?: ((value: any, row: any) => JSX.Element | string | number | boolean) | string | number | boolean | JSX.Element;
 }
 export interface RowProps {
 	/**
