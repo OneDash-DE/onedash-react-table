@@ -1,20 +1,20 @@
 {
   "files": {
     "main.css": "./static/css/main.3bfc9d8e.chunk.css",
-    "main.js": "./main.da16dd9c2221d676f562.bundle.js",
+    "main.js": "./main.f13216002836001fef46.bundle.js",
     "main.css.map": "./static/css/main.3bfc9d8e.chunk.css.map",
-    "main.js.map": "./main.da16dd9c2221d676f562.bundle.js.map",
-    "runtime~main.js": "./runtime~main.da16dd9c2221d676f562.bundle.js",
-    "runtime~main.js.map": "./runtime~main.da16dd9c2221d676f562.bundle.js.map",
-    "vendors~main.js": "./vendors~main.da16dd9c2221d676f562.bundle.js",
-    "vendors~main.js.map": "./vendors~main.da16dd9c2221d676f562.bundle.js.map",
+    "main.js.map": "./main.f13216002836001fef46.bundle.js.map",
+    "runtime~main.js": "./runtime~main.f13216002836001fef46.bundle.js",
+    "runtime~main.js.map": "./runtime~main.f13216002836001fef46.bundle.js.map",
+    "vendors~main.js": "./vendors~main.f13216002836001fef46.bundle.js",
+    "vendors~main.js.map": "./vendors~main.f13216002836001fef46.bundle.js.map",
     "iframe.html": "./iframe.html",
-    "vendors~main.da16dd9c2221d676f562.bundle.js.LICENSE.txt": "./vendors~main.da16dd9c2221d676f562.bundle.js.LICENSE.txt"
+    "vendors~main.f13216002836001fef46.bundle.js.LICENSE.txt": "./vendors~main.f13216002836001fef46.bundle.js.LICENSE.txt"
   },
   "entrypoints": [
-    "runtime~main.da16dd9c2221d676f562.bundle.js",
-    "vendors~main.da16dd9c2221d676f562.bundle.js",
+    "runtime~main.f13216002836001fef46.bundle.js",
+    "vendors~main.f13216002836001fef46.bundle.js",
     "static/css/main.3bfc9d8e.chunk.css",
-    "main.da16dd9c2221d676f562.bundle.js"
+    "main.f13216002836001fef46.bundle.js"
   ]
 }
