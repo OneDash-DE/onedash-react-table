@@ -96,24 +96,40 @@ class Table extends Component<TableProps> {
 		rows.forEach((row) => {
 			columns.forEach((column, i) => {
 				const val = row.row?.[column.name];
-				if (typeof val === "string" || typeof val === "number") {
-					sizes[i] += String(val).length;
-				} else {
-					// Default size for JSX Elements etc.
-					sizes[i] += 100;
-				}
+				if (!val || typeof val === "object") return;
+				sizes[i] += String(val).length;
 			});
 		});
+
+		if (this.props.columnDebug) {
+			console.log("----------------------------------------------------------");
+			console.log("Columns:");
+			console.log(columns);
+			console.log("Sizes [Without Label]:");
+			console.log(JSON.parse(JSON.stringify(sizes)));
+		}
 
 		// Add Column Width => Small values but longer column label
 		columns.forEach((column, i) => {
 			sizes[i] += (column.label?.length ?? 0 + 30) * 10;
 		});
 
+		if (this.props.columnDebug) {
+			console.log("Sizes [With Label]:");
+			console.log(JSON.parse(JSON.stringify(sizes)));
+		}
+
 		const total = sizes.reduce((a, b) => a + b, 0);
 		if (!this.props.minWidth) {
 			this.minWidth = (total / (rows.length + 15)) * 15 + columns.length * 18;
 			this.checkTableWidth();
+		}
+		if (this.props.columnDebug) {
+			console.log("MinWidth:");
+			console.log(this.props.minWidth ?? this.minWidth);
+			console.log("Total:");
+			console.log(total);
+			console.log("-----------------------------------------------------------");
 		}
 
 		const ratios: number[] = [];

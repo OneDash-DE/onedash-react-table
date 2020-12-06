@@ -55,6 +55,11 @@ export interface TableProps {
 	 * Text which should be showed in case there are no rows.
 	 */
 	textNoRows?: string;
+
+	/**
+	 * Debug flag for column width
+	 */
+	columnDebug?: boolean;
 }
 export interface ColumnProps {
 	/**
