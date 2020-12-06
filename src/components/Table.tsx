@@ -142,7 +142,7 @@ class Table extends Component<TableProps> {
 
 	onSelectRow = (rowNum: number, row: RowProps) => {
 		if (!this.props.select || this.props.select === "none") return;
-		if (this.props.select === "click") return this.props.onRowClick?.(rowNum, row);
+		if (this.props.select === "click") return this.props.onRowClick?.(rowNum, row.row);
 
 		const selectedRows = this.state.selectedRows;
 		const index = selectedRows.indexOf(rowNum);
