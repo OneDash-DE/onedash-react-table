@@ -95,7 +95,13 @@ class Table extends Component<TableProps> {
 		const sizes: number[] = new Array(columns.length).fill(0);
 		rows.forEach((row) => {
 			columns.forEach((column, i) => {
-				sizes[i] += String(row.row?.[column.name]).length;
+				const val = row.row?.[column.name];
+				if (typeof val === "string" || typeof val === "number") {
+					sizes[i] += String(val).length;
+				} else {
+				    // Default size for JSX Elements etc.
+					sizes[i] += 100;
+				}
 			});
 		});
 
