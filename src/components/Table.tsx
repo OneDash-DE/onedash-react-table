@@ -146,9 +146,9 @@ class Table extends Component<TableProps> {
 		return templateString;
 	};
 
-	onSelectRow = (rowNum: number, row: RowProps) => {
+	onSelectRow = (rowNum: number, row: RowProps, e?: any) => {
 		if (!this.props.select || this.props.select === "none") return;
-		if (this.props.select === "click") return this.props.onRowClick?.(rowNum, row.row);
+		if (this.props.select === "click") return this.props.onRowClick?.(rowNum, row.row, e);
 
 		const selectedRows = this.state.selectedRows;
 		const index = selectedRows.indexOf(rowNum);
@@ -161,9 +161,9 @@ class Table extends Component<TableProps> {
 		this.setState({ selectedRows });
 	};
 
-	onRowClick = (_e: any, row: RowItem) => {
+	onRowClick = (e: any, row: RowItem) => {
 		// Why? if (e.target.classList.contains("inner")) return;
-		this.onSelectRow(row.i, row);
+		this.onSelectRow(row.i, row, e);
 	};
 
 	onSelectToggle = (e: any) => {

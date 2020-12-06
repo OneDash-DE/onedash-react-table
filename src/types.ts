@@ -19,7 +19,7 @@ export interface TableProps {
 	/**
 	 * Event listener which whill be fired when the user clicks on a row.
 	 */
-	onRowClick?: (index?: number, row?: any) => void;
+	onRowClick?: (index?: number, row?: any, event?: any) => void;
 
 	/**
 	 * CSS Style which should be applied to form component
