@@ -5,4 +5,53 @@
 
 # React.js table component
 
+This guide will help you render table components with React.js.
+If you're not familiar with setting up a new React web project, please refer to the React documentation.
+
+## Install
+
+In order to install the components run the following:
+
+```bash
+npm install onedash-react-table
+```
+
+## Storybook
+
 The documentation and examples can be found [here](https://react-tables.onedash.de/).
+
+## Usage
+
+All the described components can be imported from "onedash-react-table".
+
+_Example:_
+
+```javascript
+import React, Component from "react";
+import {Table, Column, Row, Cell} from "onedash-react-table";
+
+class ComponentWithForm extends Component {
+	render() {
+		return (
+			<Table {...args}>
+				<Column name="firstName" label="Vorname" />
+				<Column name="lastName" label="Nachname" />
+				<Column name="age" label="Alter" />
+				<Column name="address" label="Adresse" />
+				{rows.map((row, i) => (
+					<Row key={i} row={row}>
+						<Cell name="firstName" />
+						<Cell name="lastName" />
+						<Cell name="age" />
+						<Cell name="address" />
+					</Row>
+				))}
+			</Table>
+		)
+	}
+}
+```
+
+## Styling
+
+Most components come without any style. You can adjust it yourself by CSS. If you like the style in this documentation, you can use our stylesheet from [here](https://github.com/OneDash-DE/onedash-react-table/blob/master/src/components/stories/table.sass).
