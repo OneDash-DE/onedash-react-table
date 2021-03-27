@@ -1,5 +1,20 @@
 import { Component } from "react";
-import { RowProps } from "../types";
+
+export interface RowProps {
+	/**
+	 * Row values
+	 */
+	row?: any;
+	/**
+	 * Classname for entire row
+	 */
+	className?: string;
+
+	/**
+	 * Override grid columns
+	 */
+	gridColumns?: string;
+}
 
 class Row extends Component<RowProps> {
 	render() {

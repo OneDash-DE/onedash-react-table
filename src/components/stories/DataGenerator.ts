@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import FAKER from "faker";
 
 interface FakeData {
@@ -7,7 +8,7 @@ interface FakeData {
 	age: number;
 }
 
-export const generateFakeData = (numberOfEntries: number) => {
+const generateFakeData = (numberOfEntries: number) => {
 	const fakeData: FakeData[] = [];
 
 	for (let i = 0; i < numberOfEntries; i++) {
@@ -22,3 +23,4 @@ export const generateFakeData = (numberOfEntries: number) => {
 
 	return fakeData;
 };
+export default generateFakeData;

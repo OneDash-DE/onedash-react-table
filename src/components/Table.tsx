@@ -1,11 +1,78 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable guard-for-in */
+/* eslint-disable no-console */
 import React, { Component } from "react";
-import { CellProps, ColumnItem, RowItem, RowProps, TableProps } from "../types";
-import Cell from "./Cell";
+import { ColumnItem, RowItem } from "../types";
+import Cell, { CellProps } from "./Cell";
 import Column from "./Column";
-import Row from "./Row";
+import Row, { RowProps } from "./Row";
 
+export interface TableProps {
+	/**
+	 * Array of selected rows. Necessary for multiple select mode.
+	 */
+	selectedRows?: number[];
+
+	/**
+	 * Select mode.
+	 */
+	select?: "single" | "click" | "multi" | "none";
+
+	/**
+	 * Event listener which will be fired when a row has been selected.
+	 */
+	onRowSelect?: (selectedRows?: number[], addedRows?: number[]) => void;
+
+	/**
+	 * Event listener which whill be fired when the user clicks on a row.
+	 */
+	onRowClick?: (index?: number, row?: any, event?: any) => void;
+
+	/**
+	 * CSS Style which should be applied to form component
+	 */
+	style?: React.CSSProperties;
+
+	/**
+	 * Right icon for each row
+	 */
+	rightIcon?: JSX.Element;
+
+	/**
+	 * Min with when the table should switch to mobile version
+	 */
+	minWidth?: number;
+
+	/**
+	 * Flag which indicates whether to disable mobile table version.
+	 */
+	disableMobile?: boolean;
+
+	/**
+	 * Search string which will be used to search in table properties
+	 */
+	searchString?: string;
+
+	/**
+	 * Message which should be printed when no searched row can be found.
+	 */
+	textNoItemFound?: (searchString: string) => string;
+
+	/**
+	 * Text which should be showed in case there are no rows.
+	 */
+	textNoRows?: string;
+
+	/**
+	 * Debug flag for column width
+	 */
+	columnDebug?: boolean;
+}
 class Table extends Component<TableProps> {
-	minWidth: number = 0;
+	minWidth = 0;
 	table = React.createRef<HTMLDivElement>();
 
 	state = {
@@ -16,6 +83,26 @@ class Table extends Component<TableProps> {
 		ratios: [] as number[],
 		isMobile: false
 	};
+	componentDidMount() {
+		window.addEventListener("resize", this.checkTableWidth);
+		this.getColumns();
+		this.setState(
+			{
+				selectedRows: this.props.selectedRows ?? []
+			},
+			this.checkTableWidth
+		);
+	}
+
+	componentDidUpdate(latestProps: any) {
+		if (latestProps.children !== this.props.children) {
+			this.getColumns();
+			this.checkTableWidth();
+		}
+		if (latestProps.selectedRows !== this.props.selectedRows) {
+			this.setState({ selectedRows: this.props.selectedRows });
+		}
+	}
 
 	getColumns = () => {
 		const columns: ColumnItem[] = [];
@@ -65,30 +152,9 @@ class Table extends Component<TableProps> {
 		}
 	};
 
-	componentDidMount() {
-		window.addEventListener("resize", this.checkTableWidth);
-		this.getColumns();
-		this.setState(
-			{
-				selectedRows: this.props.selectedRows ?? []
-			},
-			this.checkTableWidth
-		);
-	}
-
-	componentDidUpdate(latestProps: any) {
-		if (latestProps.children !== this.props.children) {
-			this.getColumns();
-			this.checkTableWidth();
-		}
-		if (latestProps.selectedRows !== this.props.selectedRows) {
-			this.setState({ selectedRows: this.props.selectedRows });
-		}
-	}
-
 	calculateColumnSizes = () => {
 		if (!this.state.rows) return;
-		const columns = this.state.columns;
+		const { columns } = this.state;
 
 		// Take maximum 30 rows to decrease load
 		const rows = this.state.rows.slice(0, 30);
@@ -150,25 +216,25 @@ class Table extends Component<TableProps> {
 				templateString += `${ratio}fr `;
 			}
 		});
-		if (this.props.select === "single") templateString = "50px " + templateString;
-		if (this.props.select === "multi") templateString = "50px " + templateString;
+		if (this.props.select === "single") templateString = `50px ${templateString}`;
+		if (this.props.select === "multi") templateString = `50px ${templateString}`;
 		if (this.props.rightIcon) templateString += " 50px";
 		return templateString;
 	};
 
 	getMobileGridColumns = () => {
 		let templateString = "1fr ";
-		if (this.props.select === "single") templateString = "50px " + templateString;
-		if (this.props.select === "multi") templateString = "50px " + templateString;
+		if (this.props.select === "single") templateString = `50px ${templateString}`;
+		if (this.props.select === "multi") templateString = `50px ${templateString}`;
 		if (this.props.rightIcon) templateString += " 50px";
 		return templateString;
 	};
 
 	onSelectRow = (rowNum: number, row: RowProps, e?: any) => {
-		if (!this.props.select || this.props.select === "none") return;
+		if (!this.props.select || this.props.select === "none") return undefined;
 		if (this.props.select === "click") return this.props.onRowClick?.(rowNum, row.row, e);
 
-		const selectedRows = this.state.selectedRows;
+		const { selectedRows } = this.state;
 		const index = selectedRows.indexOf(rowNum);
 		if (index === -1) {
 			selectedRows.push(rowNum);
@@ -177,6 +243,7 @@ class Table extends Component<TableProps> {
 		}
 
 		this.setState({ selectedRows });
+		return undefined;
 	};
 
 	onRowClick = (e: any, row: RowItem) => {
@@ -249,12 +316,12 @@ class Table extends Component<TableProps> {
 					const bVal = b.row?.[sorting.column.name];
 					if (typeof aVal === "string" && typeof bVal === "string") {
 						return sorting.direction === "up" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-					} else if (typeof aVal === "number" && typeof bVal === "number") {
-						return sorting.direction === "up" ? aVal - bVal : bVal - aVal;
-					} else {
-						console.error("You cannot sort this type of data. Allowed is only sorting of strings and numbers");
-						return 0;
 					}
+					if (typeof aVal === "number" && typeof bVal === "number") {
+						return sorting.direction === "up" ? aVal - bVal : bVal - aVal;
+					}
+					console.error("You cannot sort this type of data. Allowed is only sorting of strings and numbers");
+					return 0;
 				});
 			}
 		}
@@ -282,11 +349,11 @@ class Table extends Component<TableProps> {
 							{select === "multi" && (
 								<label className="multi-select select-container select-toggle-container">
 									<input type="checkbox" onChange={this.onSelectToggle} className="row-select-toggle" />
-									<span className="checkmark"></span>
+									<span className="checkmark" />
 								</label>
 							)}
 							{columns.map((column) => (
-								<div key={column.name} className={"column column-head " + (column.className ?? "")} data-name={column.name}>
+								<div key={column.name} className={`column column-head ${column.className ?? ""}`} data-name={column.name}>
 									{column.label}
 									{column.sortable && (
 										<div className="sorting-icons">
@@ -315,7 +382,7 @@ class Table extends Component<TableProps> {
 						</div>
 						<div className="table-body">
 							{sortedRows.map((row, i) => (
-								<div onClick={(e) => this.onRowClick(e, row)} className={this.rowClassList(i, row)} key={i}>
+								<div onClick={(e) => this.onRowClick(e, row)} className={this.rowClassList(i, row)} key={i as any}>
 									<div
 										className="inner"
 										style={{ display: "grid", gridTemplateColumns: row.gridColumns ?? gridTemplateColumns }}>
@@ -327,15 +394,15 @@ class Table extends Component<TableProps> {
 													checked={selectedRows.includes(row.i)}
 													className="row-select"
 												/>
-												<span className="checkmark"></span>
+												<span className="checkmark" />
 											</label>
 										)}
 										{columns.map((column, ii) => {
 											const cell = row.cells[column.name];
-											if (!cell) return <React.Fragment key={ii}></React.Fragment>;
+											if (!cell) return <React.Fragment key={ii as any} />;
 
 											return (
-												<div key={ii} className={this.cellClassName(column, cell.props as any)}>
+												<div key={ii as any} className={this.cellClassName(column, cell.props as any)}>
 													{cell}
 												</div>
 											);
@@ -366,7 +433,7 @@ class Table extends Component<TableProps> {
 				{isMobile && (
 					<div className="table-body">
 						{sortedRows.map((row, i) => (
-							<div onClick={(e) => this.onRowClick(e, row)} className={this.rowClassList(i, row)} key={i}>
+							<div onClick={(e) => this.onRowClick(e, row)} className={this.rowClassList(i, row)} key={i as any}>
 								<div className="inner" style={{ display: "grid", gridTemplateColumns }}>
 									{select === "multi" && (
 										<label className="multi-select select-container">
@@ -376,17 +443,17 @@ class Table extends Component<TableProps> {
 												checked={selectedRows.includes(row.i)}
 												className="row-select"
 											/>
-											<span className="checkmark"></span>
+											<span className="checkmark" />
 										</label>
 									)}
 									<div className="columns">
 										{columns.map((column, ii) => {
 											const cell = row.cells[column.name];
-											if (!cell) return <React.Fragment key={ii}></React.Fragment>;
+											if (!cell) return <React.Fragment key={ii as any} />;
 											return (
-												<div key={ii} className={"column " + (column.className ?? "")}>
+												<div key={ii as any} className={`column ${column.className ?? ""}`}>
 													<div className="label">{column.label}</div>
-													<div className={"value" + this.cellClassName(column, cell.props as any)}>{cell}</div>
+													<div className={`value${this.cellClassName(column, cell.props as any)}`}>{cell}</div>
 												</div>
 											);
 										})}
