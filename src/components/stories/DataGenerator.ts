@@ -2,8 +2,10 @@
 import FAKER from "faker";
 
 interface FakeData {
-	firstName: string;
-	lastName: string;
+	name: {
+		first: string;
+		last: string;
+	};
 	address: string;
 	age: number;
 }
@@ -13,8 +15,10 @@ const generateFakeData = (numberOfEntries: number) => {
 
 	for (let i = 0; i < numberOfEntries; i++) {
 		const entry: FakeData = {
-			firstName: FAKER.name.firstName(),
-			lastName: FAKER.name.lastName(),
+			name: {
+				first: FAKER.name.firstName(),
+				last: FAKER.name.lastName()
+			},
 			address: FAKER.address.streetAddress(),
 			age: Math.round(Math.random() * 100)
 		};

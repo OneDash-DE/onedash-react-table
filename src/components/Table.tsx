@@ -5,6 +5,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-console */
 import React, { Component } from "react";
+import AppUtils from "../app-utils";
 import { ColumnItem, RowItem } from "../types";
 import Cell, { CellProps } from "./Cell";
 import Column from "./Column";
@@ -125,7 +126,7 @@ class Table extends Component<TableProps> {
 				React.Children.forEach(child.props.children as any, (subchild) => {
 					if (subchild.type === Cell) {
 						const clone = React.cloneElement(subchild, {
-							_value: child.props.row?.[subchild.props.name],
+							_value: AppUtils.getObjectValue(subchild.props.name, child.props.row),
 							_row: child.props.row
 						});
 
@@ -161,7 +162,7 @@ class Table extends Component<TableProps> {
 		const sizes: number[] = new Array(columns.length).fill(0);
 		rows.forEach((row) => {
 			columns.forEach((column, i) => {
-				const val = row.row?.[column.name];
+				const val = AppUtils.getObjectValue(column.name, row.row);
 				if (!val || typeof val === "object") return;
 				sizes[i] += String(val).length;
 			});
@@ -312,8 +313,8 @@ class Table extends Component<TableProps> {
 				sortedRows = sorting.column.sortingFunction(sortedRows);
 			} else {
 				sortedRows = sortedRows.sort((a, b) => {
-					const aVal = a.row?.[sorting.column.name];
-					const bVal = b.row?.[sorting.column.name];
+					const aVal = AppUtils.getObjectValue(sorting.column.name, a.row);
+					const bVal = AppUtils.getObjectValue(sorting.column.name, b.row);
 					if (typeof aVal === "string" && typeof bVal === "string") {
 						return sorting.direction === "up" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
 					}
@@ -327,13 +328,22 @@ class Table extends Component<TableProps> {
 		}
 
 		if (searchString && searchString.length > 0) {
-			sortedRows = sortedRows.filter((x) =>
-				Object.keys(x.row ?? {}).find((propName) => {
-					const val = x.row?.[propName];
-					if (typeof val === "object" && typeof val === "function") return undefined;
-					return String(val).toLowerCase().indexOf(searchString.toLowerCase()) !== -1;
-				})
-			);
+			sortedRows = sortedRows.filter((x) => {
+				const searchData = (obj: any): any => {
+					return Object.keys(obj).find((propName) => {
+						const val = obj?.[propName];
+						if (typeof val === "object" && !Array.isArray(val)) {
+							const d = searchData(val);
+
+							return d;
+						}
+						if (typeof val === "object" || typeof val === "function") return undefined;
+
+						return String(val).toLowerCase().indexOf(searchString.toLowerCase()) !== -1;
+					});
+				};
+				return searchData(x.row ?? {}) !== undefined;
+			});
 		}
 
 		return (

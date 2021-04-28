@@ -17,14 +17,14 @@ export const rows = generateFakeData(20);
 
 ```jsx
 <Table>
-	<Column name="firstName" label="Vorname" />
-	<Column name="lastName" label="Nachname" />
+	<Column name="name.first" label="Vorname" />
+	<Column name="name.last" label="Nachname" />
 	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
 	{rows.map((row, i) => (
 		<Row key={i} row={row}>
-			<Cell name="firstName" />
-			<Cell name="lastName" />
+			<Cell name="name.first" />
+			<Cell name="name.last" />
 			<Cell name="age" />
 			<Cell name="address" />
 		</Row>
@@ -36,14 +36,14 @@ export const rows = generateFakeData(20);
 	<Story name="Basic" args={{}}>
 		{(args) => (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" />
-				<Column name="lastName" label="Nachname" />
+				<Column name="name.first" label="Vorname" />
+				<Column name="name.last" label="Nachname" />
 				<Column name="age" label="Alter" />
 				<Column name="address" label="Adresse" />
 				{rows.map((row, i) => (
 					<Row key={i} row={row}>
-						<Cell name="firstName" />
-						<Cell name="lastName" />
+						<Cell name="name.first" />
+						<Cell name="name.last" />
 						<Cell name="age" />
 						<Cell name="address" />
 					</Row>
@@ -57,14 +57,14 @@ export const rows = generateFakeData(20);
 
 ```jsx
 <Table>
-	<Column name="firstName" label="Vorname" />
-	<Column name="lastName" label="Nachname" />
+	<Column name="name.first" label="Vorname" />
+	<Column name="name.last" label="Nachname" />
 	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
 	{rows.map((row, i) => (
 		<Row key={i} row={row}>
-			<Cell name="firstName" />
-			<Cell name="lastName" />
+			<Cell name="name.first" />
+			<Cell name="name.last" />
 			<Cell name="age" />
 			<Cell name="address" />
 		</Row>
@@ -76,14 +76,14 @@ export const rows = generateFakeData(20);
 	<Story name="Order by" args={{}}>
 		{(args) => (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" sortable />
-				<Column name="lastName" label="Nachname" />
+				<Column name="name.first" label="Vorname" sortable />
+				<Column name="name.last" label="Nachname" />
 				<Column name="age" label="Alter" sortable />
 				<Column name="address" label="Adresse" />
 				{rows.map((row, i) => (
 					<Row key={i} row={row}>
-						<Cell name="firstName" />
-						<Cell name="lastName" />
+						<Cell name="name.first" />
+						<Cell name="name.last" />
 						<Cell name="age" />
 						<Cell name="address" />
 					</Row>
@@ -97,14 +97,14 @@ export const rows = generateFakeData(20);
 
 ```jsx
 <Table rightIcon={<span className="right-chevron"></span>}>
-	<Column name="firstName" label="Vorname" />
-	<Column name="lastName" label="Nachname" />
+	<Column name="name.first" label="Vorname" />
+	<Column name="name.last" label="Nachname" />
 	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
 	{rows.map((row, i) => (
 		<Row key={i} row={row}>
-			<Cell name="firstName" />
-			<Cell name="lastName" />
+			<Cell name="name.first" />
+			<Cell name="name.last" />
 			<Cell name="age" />
 			<Cell name="address" />
 		</Row>
@@ -120,14 +120,14 @@ export const rows = generateFakeData(20);
 		}}>
 		{(args) => (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" />
-				<Column name="lastName" label="Nachname" />
+				<Column name="name.first" label="Vorname" />
+				<Column name="name.last" label="Nachname" />
 				<Column name="age" label="Alter" />
 				<Column name="address" label="Adresse" />
 				{rows.map((row, i) => (
 					<Row key={i} row={row}>
-						<Cell name="firstName" />
-						<Cell name="lastName" />
+						<Cell name="name.first" />
+						<Cell name="name.last" />
 						<Cell name="age" />
 						<Cell name="address" />
 					</Row>
@@ -143,14 +143,14 @@ This example multiplies the age of a person by 10 and renames all persons to Joh
 
 ```jsx
 <Table>
-	<Column name="firstName" label="Vorname" />
-	<Column name="lastName" label="Nachname" />
+	<Column name="name.first" label="Vorname" />
+	<Column name="name.last" label="Nachname" />
 	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
 	{rows.map((row, i) => (
 		<Row key={i} row={row}>
-			<Cell name="firstName">John</Cell>
-			<Cell name="lastName" />
+			<Cell name="name.first">John</Cell>
+			<Cell name="name.last" />
 			<Cell name="age">{(age) => age * 10}</Cell>
 			<Cell name="address">
 				<button>Button</button>
@@ -164,14 +164,14 @@ This example multiplies the age of a person by 10 and renames all persons to Joh
 	<Story name="Formatting Function" args={{}}>
 		{(args) => (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" />
-				<Column name="lastName" label="Nachname" />
+				<Column name="name.first" label="Vorname" />
+				<Column name="name.last" label="Nachname" />
 				<Column name="age" label="Alter" />
 				<Column name="address" label="Adresse" />
 				{rows.map((row, i) => (
 					<Row key={i} row={row}>
-						<Cell name="firstName">John</Cell>
-						<Cell name="lastName" />
+						<Cell name="name.first">John</Cell>
+						<Cell name="name.last" />
 						<Cell name="age">{(age) => age * 10}</Cell>
 						<Cell name="address">
 							<button>Button</button>
@@ -187,14 +187,14 @@ This example multiplies the age of a person by 10 and renames all persons to Joh
 
 ```jsx
 <Table searchString="<INPUT VALUE>">
-	<Column name="firstName" label="Vorname" />
-	<Column name="lastName" label="Nachname" />
+	<Column name="name.first" label="Vorname" />
+	<Column name="name.last" label="Nachname" />
 	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
 	{rows.map((row, i) => (
 		<Row key={i} row={row}>
-			<Cell name="firstName" />
-			<Cell name="lastName" />
+			<Cell name="name.first" />
+			<Cell name="name.last" />
 			<Cell name="age" />
 			<Cell name="address" />
 		</Row>
@@ -208,19 +208,19 @@ This example multiplies the age of a person by 10 and renames all persons to Joh
 		args={{
 			select: "click",
 			rows,
-			searchString: rows[0].firstName,
+			searchString: rows[0].name.first,
 			selectedRows: [1, 2]
 		}}>
 		{(args) => (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" sortable />
-				<Column name="lastName" label="Nachname" />
+				<Column name="name.first" label="Vorname" sortable />
+				<Column name="name.last" label="Nachname" />
 				<Column name="age" label="Alter" sortable />
 				<Column name="address" label="Adresse" />
 				{rows.map((row, i) => (
 					<Row key={i} row={row}>
-						<Cell name="firstName" />
-						<Cell name="lastName" />
+						<Cell name="name.first" />
+						<Cell name="name.last" />
 						<Cell name="age" />
 						<Cell name="address" />
 					</Row>
@@ -234,14 +234,14 @@ This example multiplies the age of a person by 10 and renames all persons to Joh
 
 ```jsx
 <Table className="table-className">
-	<Column name="firstName" label="Vorname" />
-	<Column name="lastName" label="Nachname" />
+	<Column name="name.first" label="Vorname" />
+	<Column name="name.last" label="Nachname" />
 	<Column name="age" label="Alter" className="special" />
 	<Column name="address" label="Adresse" />
 	{rows.map((row, i) => (
 		<Row key={i} row={row} className={i === 3 ? "special" : ""}>
-			<Cell name="firstName" className={i === 5 ? "special" : ""} />
-			<Cell name="lastName" />
+			<Cell name="name.first" className={i === 5 ? "special" : ""} />
+			<Cell name="name.last" />
 			<Cell name="age" />
 			<Cell name="address" />
 		</Row>
@@ -257,14 +257,14 @@ This example multiplies the age of a person by 10 and renames all persons to Joh
 		}}>
 		{(args) => (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" />
-				<Column name="lastName" label="Nachname" />
+				<Column name="name.first" label="Vorname" />
+				<Column name="name.last" label="Nachname" />
 				<Column name="age" label="Alter" className="special" />
 				<Column name="address" label="Adresse" />
 				{rows.map((row, i) => (
 					<Row key={i} row={row} className={i === 3 ? "special" : ""}>
-						<Cell name="firstName" className={i === 5 ? "special" : ""} />
-						<Cell name="lastName" />
+						<Cell name="name.first" className={i === 5 ? "special" : ""} />
+						<Cell name="name.last" />
 						<Cell name="age" />
 						<Cell name="address" />
 					</Row>
@@ -280,14 +280,14 @@ It' possible to select rows either by click on one, or by selecting multiple row
 
 ```jsx
 <Table select="multi" selectedRows={[3, 5]}>
-	<Column name="firstName" label="Vorname" />
-	<Column name="lastName" label="Nachname" />
+	<Column name="name.first" label="Vorname" />
+	<Column name="name.last" label="Nachname" />
 	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
 	{rows.map((row, i) => (
 		<Row key={i} row={row}>
-			<Cell name="firstName" />
-			<Cell name="lastName" />
+			<Cell name="name.first" />
+			<Cell name="name.last" />
 			<Cell name="age" />
 			<Cell name="address" />
 		</Row>
@@ -299,14 +299,14 @@ It' possible to select rows either by click on one, or by selecting multiple row
 	<Story name="Select Rows" args={{ select: "multi", selectedRows: [3, 5] }}>
 		{(args) => (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" />
-				<Column name="lastName" label="Nachname" />
+				<Column name="name.first" label="Vorname" />
+				<Column name="name.last" label="Nachname" />
 				<Column name="age" label="Alter" />
 				<Column name="address" label="Adresse" />
 				{rows.map((row, i) => (
 					<Row key={i} row={row}>
-						<Cell name="firstName" />
-						<Cell name="lastName" />
+						<Cell name="name.first" />
+						<Cell name="name.last" />
 						<Cell name="age" />
 						<Cell name="address" />
 					</Row>
