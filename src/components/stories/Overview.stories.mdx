@@ -32,14 +32,14 @@ class ComponentWithForm extends Component {
 	render() {
 		return (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" />
-				<Column name="lastName" label="Nachname" />
+				<Column name="name.first" label="Vorname" />
+				<Column name="name.last" label="Nachname" />
 				<Column name="age" label="Alter" />
 				<Column name="address" label="Adresse" />
 				{rows.map((row, i) => (
 					<Row key={i} row={row}>
-						<Cell name="firstName" />
-						<Cell name="lastName" />
+						<Cell name="name.first" />
+						<Cell name="name.last" />
 						<Cell name="age" />
 						<Cell name="address" />
 					</Row>
