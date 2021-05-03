@@ -280,7 +280,7 @@ It' possible to select rows either by click on one, or by selecting multiple row
 
 ```jsx
 <Table select="multi" selectedRows={[3, 5]}>
-	<Column name="firstName" label="Vorname" />
+	<Column sortable name="firstName" label="Vorname" />
 	<Column name="lastName" label="Nachname" />
 	<Column name="age" label="Alter" />
 	<Column name="address" label="Adresse" />
@@ -299,7 +299,7 @@ It' possible to select rows either by click on one, or by selecting multiple row
 	<Story name="Select Rows" args={{ select: "multi", selectedRows: [3, 5] }}>
 		{(args) => (
 			<Table {...args}>
-				<Column name="firstName" label="Vorname" />
+				<Column sortable name="firstName" label="Vorname" />
 				<Column name="lastName" label="Nachname" />
 				<Column name="age" label="Alter" />
 				<Column name="address" label="Adresse" />

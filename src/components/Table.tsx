@@ -24,7 +24,17 @@ export interface TableProps {
 	/**
 	 * Event listener which will be fired when a row has been selected.
 	 */
-	onRowSelect?: (selectedRows?: number[], addedRows?: number[]) => void;
+	onRowSelect?: (selectedRowIndexes: number[], mode: "add" | "remove", changedRowIndexes: number[], changedRows: any[]) => void;
+
+	/**
+	 * Allowes a select all checkbox
+	 */
+	allowSelectAll?: boolean;
+
+	/**
+	 * Width of each checkbox
+	 */
+	checkboxWidth?: string;
 
 	/**
 	 * Event listener which whill be fired when the user clicks on a row.
@@ -207,6 +217,8 @@ class Table extends Component<TableProps> {
 		this.setState({ ratios });
 	};
 
+	getCheckboxWidth = () => this.props.checkboxWidth ?? "30px";
+
 	getDesktopGridColumns = () => {
 		let templateString = "";
 		this.state.ratios.forEach((ratio, i) => {
@@ -216,16 +228,16 @@ class Table extends Component<TableProps> {
 				templateString += `${ratio}fr `;
 			}
 		});
-		if (this.props.select === "single") templateString = `50px ${templateString}`;
-		if (this.props.select === "multi") templateString = `50px ${templateString}`;
+		if (this.props.select === "single") templateString = `${this.getCheckboxWidth()} ${templateString}`;
+		if (this.props.select === "multi") templateString = `${this.getCheckboxWidth()} ${templateString}`;
 		if (this.props.rightIcon) templateString += " 50px";
 		return templateString;
 	};
 
 	getMobileGridColumns = () => {
 		let templateString = "1fr ";
-		if (this.props.select === "single") templateString = `50px ${templateString}`;
-		if (this.props.select === "multi") templateString = `50px ${templateString}`;
+		if (this.props.select === "single") templateString = `${this.getCheckboxWidth()} ${templateString}`;
+		if (this.props.select === "multi") templateString = `${this.getCheckboxWidth()} ${templateString}`;
 		if (this.props.rightIcon) templateString += " 50px";
 		return templateString;
 	};
@@ -236,13 +248,17 @@ class Table extends Component<TableProps> {
 
 		const { selectedRows } = this.state;
 		const index = selectedRows.indexOf(rowNum);
+		let mode: "add" | "remove" = "add";
 		if (index === -1) {
 			selectedRows.push(rowNum);
 		} else {
+			mode = "remove";
 			selectedRows.splice(index, 1);
 		}
 
 		this.setState({ selectedRows });
+
+		this.props.onRowSelect?.(selectedRows, mode, [rowNum], [row.row]);
 		return undefined;
 	};
 
@@ -251,16 +267,25 @@ class Table extends Component<TableProps> {
 		this.onSelectRow(row.i, row, e);
 	};
 
-	onSelectToggle = (e: any) => {
-		if (!this.state.rows) return;
-		const isChecked = e.target.checked;
-		const selectedRows = [];
-		if (isChecked) {
-			for (let i = 0; i < this.state.rows.length; i++) {
-				selectedRows.push(i);
+	toggleAll = (rows: RowItem[], add: boolean) => {
+		if (!rows) return;
+		const selectedRows = add ? rows.map((x) => x.i) : [];
+		const changed: RowItem[] = [];
+		rows.forEach((row) => {
+			if (add && !this.state.selectedRows.includes(row.i)) {
+				changed.push(row);
 			}
-		}
+			if (!add && this.state.selectedRows.includes(row.i)) {
+				changed.push(row);
+			}
+		});
 		this.setState({ selectedRows });
+		this.props.onRowSelect?.(
+			selectedRows,
+			add ? "add" : "remove",
+			changed.map((x) => x.i),
+			changed.map((x) => x.row)
+		);
 	};
 
 	rowClassList = (i: number, row: RowItem) => {
@@ -347,10 +372,20 @@ class Table extends Component<TableProps> {
 					<>
 						<div className="table-head" style={{ display: "grid", gridTemplateColumns }}>
 							{select === "multi" && (
-								<label className="multi-select select-container select-toggle-container">
-									<input type="checkbox" onChange={this.onSelectToggle} className="row-select-toggle" />
-									<span className="checkmark" />
-								</label>
+								<>
+									{this.props.allowSelectAll ? (
+										<label className="multi-select select-container select-toggle-container">
+											<input
+												type="checkbox"
+												onChange={(e) => this.toggleAll(sortedRows, e.target.checked)}
+												className="row-select-toggle"
+											/>
+											<span className="checkmark" />
+										</label>
+									) : (
+										<span />
+									)}
+								</>
 							)}
 							{columns.map((column) => (
 								<div key={column.name} className={`column column-head ${column.className ?? ""}`} data-name={column.name}>
@@ -390,7 +425,7 @@ class Table extends Component<TableProps> {
 											<label className="multi-select select-container">
 												<input
 													type="checkbox"
-													onChange={() => this.onSelectRow(i, row)}
+													onChange={() => this.onSelectRow(row.i, row)}
 													checked={selectedRows.includes(row.i)}
 													className="row-select"
 												/>
