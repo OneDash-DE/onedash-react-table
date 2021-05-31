@@ -358,8 +358,7 @@ class Table extends Component<TableProps> {
 					return Object.keys(obj).find((propName) => {
 						const val = obj?.[propName];
 						if (typeof val === "object" && !Array.isArray(val)) {
-							const d = searchData(val);
-
+							const d = searchData(val ?? {});
 							return d;
 						}
 						if (typeof val === "object" || typeof val === "function") return undefined;
