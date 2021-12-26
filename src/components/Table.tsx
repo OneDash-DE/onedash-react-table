@@ -81,6 +81,11 @@ export interface TableProps {
 	 * Debug flag for column width
 	 */
 	columnDebug?: boolean;
+
+	/**
+	 * Optional class name of the table
+	 */
+	className?: string;
 }
 class Table extends Component<TableProps> {
 	minWidth = 0;
@@ -315,6 +320,7 @@ class Table extends Component<TableProps> {
 	tableClass = () => {
 		let className = "onedash-table-v2";
 		if (this.state.isMobile) className += " is-mobile";
+		if (this.props.className) className += ` ${this.props.className}`;
 		return className;
 	};
 
