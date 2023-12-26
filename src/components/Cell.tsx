@@ -4,10 +4,12 @@ export interface CellProps {
 	/**
 	 * Object name
 	 */
+	// eslint-disable-next-line react/no-unused-prop-types
 	name: string;
 	/**
 	 * Classname for this cell
 	 */
+	// eslint-disable-next-line react/no-unused-prop-types
 	className?: string;
 
 	/**
