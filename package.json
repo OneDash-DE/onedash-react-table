@@ -8,6 +8,7 @@
 	"main": "dist/onedash-react-table.js",
 	"module": "dist/onedash-react-table.modern.mjs",
 	"source": "src/index.ts",
+	"types": "dist/types.d.ts",
 	"engines": {
 		"node": ">=16"
 	},
