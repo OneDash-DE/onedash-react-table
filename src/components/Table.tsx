@@ -4,7 +4,7 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-console */
-import React, { Component } from "react";
+import React, { Component, ReactNode } from "react";
 import AppUtils from "../app-utils";
 import { ColumnItem, RowItem } from "../types";
 import Cell, { CellProps } from "./Cell";
@@ -86,6 +86,8 @@ export interface TableProps {
 	 * Optional class name of the table
 	 */
 	className?: string;
+
+	children?: ReactNode;
 }
 class Table extends Component<TableProps> {
 	minWidth = 0;

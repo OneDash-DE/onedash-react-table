@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { Component, ReactNode } from "react";
 
 export interface RowProps {
 	/**
@@ -14,6 +14,8 @@ export interface RowProps {
 	 * Override grid columns
 	 */
 	gridColumns?: string;
+
+	children?: ReactNode;
 }
 
 class Row extends Component<RowProps> {

@@ -24,6 +24,9 @@ export interface CellProps {
 	 */
 	_row?: any;
 
+	/**
+	 * Render function
+	 */
 	children?: ((value: any, row: any) => JSX.Element | string | number | boolean) | string | number | boolean | JSX.Element;
 }
 
