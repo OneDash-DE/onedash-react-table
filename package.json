@@ -5,14 +5,14 @@
 	"author": "ChewbaccaCookie",
 	"license": "MIT",
 	"repository": "OneDash-DE/onedash-react-table",
-	"main": "dist/index.js",
-	"module": "dist/index.modern.js",
+	"main": "dist/onedash-react-table.js",
+	"module": "dist/onedash-react-table.modern.mjs",
 	"source": "src/index.ts",
 	"engines": {
-		"node": ">=10"
+		"node": ">=16"
 	},
 	"scripts": {
-		"build": "microbundle --no-sourcemap --css-modules false --jsx React.createElement --jsxFragment React.Fragment --format modern",
+		"build": "microbundle --no-sourcemap --css-modules false --jsx React.createElement --jsxFragment React.Fragment --format modern,cjs",
 		"start": "npm run storybook",
 		"lint": "tsc --noEmit && eslint \"./src/**/*.{js,ts,tsx}\" --quiet",
 		"format": "npx prettier --write src/**/*.{js,ts,tsx}",
