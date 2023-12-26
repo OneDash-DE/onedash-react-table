@@ -1,4 +1,4 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": ["local>ChewbaccaCookie/chewbaccacookie-configs//renovate-config.json"]
+    "extends": ["github>ChewbaccaCookie/chewbaccacookie-configs//renovate-config.json"]
 }
