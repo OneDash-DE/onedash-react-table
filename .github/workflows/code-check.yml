@@ -1,5 +1,8 @@
 name: Check coding
 on:
+    push:
+        branches:
+            - master
     pull_request:
         branches:
             - master
