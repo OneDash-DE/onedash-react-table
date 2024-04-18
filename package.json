@@ -29,7 +29,7 @@
 	"devDependencies": {
 		"@babel/core": "7.24.4",
 		"@babel/plugin-syntax-nullish-coalescing-operator": "^7.8.3",
-		"@semantic-release/git": "^9.0.0",
+		"@semantic-release/git": "^10.0.0",
 		"@storybook/addon-actions": "6.5.16",
 		"@storybook/addon-docs": "6.5.16",
 		"@storybook/addon-essentials": "6.5.16",
@@ -70,7 +70,7 @@
 		"react-dom": "^17.0.2",
 		"react-scripts": "5.0.1",
 		"sass": "1.75.0",
-		"semantic-release": "^19.0.0",
+		"semantic-release": "^23.0.0",
 		"typescript": "4.9.5",
 		"uuid": "^9.0.0"
 	},
