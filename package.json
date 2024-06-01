@@ -50,7 +50,7 @@
 		"conventional-changelog-conventionalcommits": "^8.0.0",
 		"cross-env": "^7.0.3",
 		"eslint": "^7.23.0",
-		"eslint-config-airbnb-typescript": "^12.3.1",
+		"eslint-config-airbnb-typescript": "^18.0.0",
 		"eslint-config-prettier": "^9.0.0",
 		"eslint-config-standard": "^17.0.0",
 		"eslint-config-standard-react": "^13.0.0",
