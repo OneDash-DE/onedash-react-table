@@ -69,7 +69,7 @@
 		"webpack": "5.99.6",
 		"react-dom": "^17.0.2",
 		"react-scripts": "5.0.1",
-		"sass": "1.86.3",
+		"sass": "1.87.0",
 		"semantic-release": "^24.0.0",
 		"typescript": "4.9.5",
 		"uuid": "^11.0.0"
